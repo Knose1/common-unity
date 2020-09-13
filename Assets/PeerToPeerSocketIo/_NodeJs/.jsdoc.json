@@ -1,0 +1,33 @@
+{
+	"tags": {
+		"allowUnknownTags": true,
+		"dictionaries": ["jsdoc"]
+	},
+	"source": {
+		"include": ["main.js","./src/"],
+		"includePattern": ".js$",
+		"excludePattern": "(node_modules/|docs)"
+	},
+	"templates": {
+		"cleverLinks": false,
+		"monospaceLinks": true,
+		"useLongnameInNav": false,
+		"systemName": "Furry",
+		"systemSummary": "Documentation",
+		"systemColor": "hsl(150, 56%, 46%)",
+		"stylesheets": ["./_jsdocCustomScripts/index.css", "./_jsdocCustomScripts/dark.css"],
+		"scripts": ["./_jsdocCustomScripts/jsColorUtils.js", "./_jsdocCustomScripts/index.js"]
+	},
+	"opts": {
+		"destination": "./docs/",
+		"encoding": "utf8",
+		"private": true,
+		"recurse": true,
+		"template": "./node_modules/foodoc/template"
+	},
+	"plugins": ["plugins/markdown"],
+	"markdown": {
+		"hardwrap ": true,
+		"idInHeadings": true
+	}
+}

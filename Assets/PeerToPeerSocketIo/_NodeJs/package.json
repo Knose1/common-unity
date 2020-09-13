@@ -1,0 +1,22 @@
+{
+	"name": "furry_server",
+	"version": "1.0.0",
+	"description": "",
+	"main": "main.js",
+	"scripts": {
+		"start": "node main.js",
+		"test": "node --inspect main.js",
+		"generate-docs": "node _jsdocGenAndOpen.js .jsdoc.json docs/index.html",
+		"install-dependencies": "npm i"
+	},
+	"dependencies": {
+		"express": "^4.17.1",
+		"shortid": "^2.2.15",
+		"socket.io": "^2.3.0"
+	},
+	"devDependencies": {
+		"foodoc": "0.0.9",
+		"jsdoc": "^3.6.3",
+		"minami": "^1.2.3"
+	}
+}
