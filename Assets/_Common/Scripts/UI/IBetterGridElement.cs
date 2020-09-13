@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Com.Github.Knose1.Common.UI
+namespace Com.GitHub.Knose1.Common.UI
 {
 	public interface IBetterGridElement
 	{

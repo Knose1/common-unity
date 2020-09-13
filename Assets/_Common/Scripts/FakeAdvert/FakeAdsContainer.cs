@@ -1,8 +1,8 @@
 using UnityEngine;
-using Com.Github.Knose1.Common.FakeAdvert.UI;
-using Com.Github.Knose1.Common.Common;
+using Com.GitHub.Knose1.Common.FakeAdvert.UI;
+using Com.GitHub.Knose1.Common.Common;
 
-namespace Com.Github.Knose1.Common.FakeAdvert {
+namespace Com.GitHub.Knose1.Common.FakeAdvert {
 	public class FakeAdsContainer : MonoBehaviour {
 
 		public static FakeAdsContainer Instance => Singleton.GetInstance<FakeAdsContainer>();

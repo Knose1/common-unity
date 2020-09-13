@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Com.Github.Knose1.Common.File {
+namespace Com.GitHub.Knose1.Common.File {
 	static public class HandleTextFile
 	{
 		static public StreamWriter WriteString(string path)

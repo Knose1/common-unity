@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Com.Github.Knose1.Common.AnimatorStateMachine
+namespace Com.GitHub.Knose1.Common.AnimatorStateMachine
 {
 	public class SetParametersOnStateExit : SetParameterOnState
 	{

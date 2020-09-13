@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Com.Github.Knose1.Common.File
+namespace Com.GitHub.Knose1.Common.File
 {
 	public class AudioClipGetter
 	{

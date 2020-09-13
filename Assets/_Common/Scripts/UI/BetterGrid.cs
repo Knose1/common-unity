@@ -4,8 +4,8 @@
 ///-----------------------------------------------------------------
 
 using UnityEngine;
-using Com.Github.Knose1.Common.Attributes;
-using Com.Github.Knose1.Common.Attributes.Abstract;
+using Com.GitHub.Knose1.Common.Attributes;
+using Com.GitHub.Knose1.Common.Attributes.Abstract;
 using System.Reflection;
 using UnityEditor;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using DG.Tweening;
 using DG.Tweening.Core;
 using System;
 
-namespace Com.Github.Knose1.Common.UI {
+namespace Com.GitHub.Knose1.Common.UI {
 	[RequireComponent(typeof(RectTransform))]
 	[ExecuteAlways]
 	public class BetterGrid : MonoBehaviour

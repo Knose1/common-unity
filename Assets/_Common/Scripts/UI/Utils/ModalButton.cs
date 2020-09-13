@@ -6,7 +6,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Com.Github.Knose1.Common.UI.Utils {
+namespace Com.GitHub.Knose1.Common.UI.Utils {
 	public class ModalButton : MonoBehaviour {
 
 		public Text text = null;

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 
-namespace Com.Github.Knose1.Common {
+namespace Com.GitHub.Knose1.Common {
 	[RequireComponent(typeof(PostProcessVolume))]
 	public class PostProcessGlobalOnPlay : MonoBehaviour {
 	

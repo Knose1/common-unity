@@ -5,7 +5,7 @@ using TMPro;
 using System;
 using System.Text.RegularExpressions;
 
-namespace Com.IsartDigital.Common
+namespace Com.GitHub.Knose1.Common
 {
 	[RequireComponent(typeof(TMP_InputField))]
 	public class TMPInputMaxCharacter : MonoBehaviour

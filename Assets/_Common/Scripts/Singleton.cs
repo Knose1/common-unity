@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Com.Github.Knose1.Common.Common
+namespace Com.GitHub.Knose1.Common.Common
 {
 	public static class Singleton
 	{

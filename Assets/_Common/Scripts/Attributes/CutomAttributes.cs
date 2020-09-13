@@ -1,4 +1,4 @@
-﻿using Com.Github.Knose1.Common.Attributes.Abstract;
+﻿using Com.GitHub.Knose1.Common.Attributes.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Com.Github.Knose1.Common.Attributes.Abstract
+namespace Com.GitHub.Knose1.Common.Attributes.Abstract
 {
 	public abstract class DisabledHide : Disabled
 	{
@@ -75,7 +75,7 @@ namespace Com.Github.Knose1.Common.Attributes.Abstract
 	}
 }
 
-namespace Com.Github.Knose1.Common.Attributes
+namespace Com.GitHub.Knose1.Common.Attributes
 {
 	public enum ClassicComparisionType
 	{

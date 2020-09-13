@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Com.Github.Knose1.Common.FakeAdvert.UI {
+namespace Com.GitHub.Knose1.Common.FakeAdvert.UI {
 	public class RewardAdvert : Advert {
 
 		public delegate void WinDelegate(float openTime);

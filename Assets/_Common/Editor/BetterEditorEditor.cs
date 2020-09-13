@@ -2,10 +2,10 @@
 using UnityEditor;
 using System.Reflection;
 using System;
-using Com.Github.Knose1.Common.Attributes;
-using Com.Github.Knose1.Common.Attributes.Abstract;
+using Com.GitHub.Knose1.Common.Attributes;
+using Com.GitHub.Knose1.Common.Attributes.Abstract;
 
-namespace Com.Github.Knose1.Common.Editor {
+namespace Com.GitHub.Knose1.Common.Editor {
 
 	[CustomEditor(typeof(BetterEditor), true), CanEditMultipleObjects()]
 	public class BetterEditorEditor : UnityEditor.Editor {

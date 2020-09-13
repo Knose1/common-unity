@@ -1,6 +1,6 @@
 using System;
 
-namespace Com.Github.Knose1.Common.Twinning.Curve
+namespace Com.GitHub.Knose1.Common.Twinning.Curve
 {
 	delegate float CurveDelegate(float lerX);
 

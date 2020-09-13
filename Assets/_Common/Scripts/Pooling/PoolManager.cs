@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Com.Github.Knose1.Common.Pooling {
+namespace Com.GitHub.Knose1.Common.Pooling {
 	[AddComponentMenu("Common/Pooling/"+nameof(PoolManager))]
 	public partial class PoolManager : MonoBehaviour {
 		private static PoolManager _instance;

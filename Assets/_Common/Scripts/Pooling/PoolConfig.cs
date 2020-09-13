@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Com.Github.Knose1.Common.Pooling {
+namespace Com.GitHub.Knose1.Common.Pooling {
 	
 	[CreateAssetMenu(
 		menuName = "Common/Pooling" + nameof(PoolConfig),

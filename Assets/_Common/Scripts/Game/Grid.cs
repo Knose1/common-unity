@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Com.Github.Knose1.Common.Game
+namespace Com.GitHub.Knose1.Common.Game
 {
 	public class Grid : MonoBehaviour
 	{

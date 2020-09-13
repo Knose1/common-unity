@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace Com.Github.Knose1.Common
+namespace Com.GitHub.Knose1.Common
 {
 	public static class StringUtils
 	{

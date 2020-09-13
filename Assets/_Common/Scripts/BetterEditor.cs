@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Com.Github.Knose1
+namespace Com.GitHub.Knose1
 {
 	public class BetterEditor : MonoBehaviour { }
 }

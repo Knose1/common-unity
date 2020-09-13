@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Com.Github.Knose1.Common.Utils
+namespace Com.GitHub.Knose1.Common.Utils
 {
 	/// <summary>
 	/// 

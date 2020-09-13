@@ -4,7 +4,7 @@
 
 using UnityEngine;
 
-namespace Com.Github.Knose1.Common.Pooling {
+namespace Com.GitHub.Knose1.Common.Pooling {
 	public interface IPoolBehaviourStart
 	{
 		/// <summary>

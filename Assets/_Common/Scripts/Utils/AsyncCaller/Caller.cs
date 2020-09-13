@@ -1,6 +1,6 @@
 using System;
 
-namespace Com.Github.Knose1.Common.Utils.AsyncCaller {
+namespace Com.GitHub.Knose1.Common.Utils.AsyncCaller {
 	abstract class CallerBase
 	{
 		protected object[] args;

@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Com.Github.Knose1.Common
+namespace Com.GitHub.Knose1.Common
 {
 	public enum SplitMode
 	{

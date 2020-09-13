@@ -1,10 +1,10 @@
-using Com.Github.Knose1.Common.Common;
-using Com.Github.Knose1.Common.FakeAdvert.UI;
+using Com.GitHub.Knose1.Common.Common;
+using Com.GitHub.Knose1.Common.FakeAdvert.UI;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Com.Github.Knose1.Common.FakeAdvert {
+namespace Com.GitHub.Knose1.Common.FakeAdvert {
 	public class FakeAdsManager : MonoBehaviour {
 
 		public static FakeAdsManager Instance => Singleton.GetInstance<FakeAdsManager>();

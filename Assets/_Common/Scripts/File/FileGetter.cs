@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
-namespace Com.Github.Knose1.Common.File {
+namespace Com.GitHub.Knose1.Common.File {
 
 	public class FileGetter {
 

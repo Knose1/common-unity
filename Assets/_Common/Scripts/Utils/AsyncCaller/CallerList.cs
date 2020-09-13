@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Com.Github.Knose1.Common.Utils.AsyncCaller {
+namespace Com.GitHub.Knose1.Common.Utils.AsyncCaller {
 	class CallerList : List<CallerBase>
 	{
 		/// <summary>

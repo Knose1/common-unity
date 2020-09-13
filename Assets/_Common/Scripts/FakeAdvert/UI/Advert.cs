@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Com.Github.Knose1.Common.FakeAdvert.UI {
+namespace Com.GitHub.Knose1.Common.FakeAdvert.UI {
 
 	[DisallowMultipleComponent()]
 	public class Advert : MonoBehaviour {

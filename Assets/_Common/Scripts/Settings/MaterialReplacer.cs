@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Com.Github.Knose1.Common.Settings
+namespace Com.GitHub.Knose1.Common.Settings
 {
 	[CreateAssetMenu(fileName = nameof(MaterialReplacer), menuName = nameof(Common) + "/" + nameof(MaterialReplacer))]
 	public class MaterialReplacer : ScriptableObject

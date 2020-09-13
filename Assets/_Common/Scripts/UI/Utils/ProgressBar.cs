@@ -7,7 +7,7 @@ using System.Collections;
 using UnityEditor;
 #endif
 
-namespace Com.Github.Knose1.Common.UI.Utils {
+namespace Com.GitHub.Knose1.Common.UI.Utils {
 
 	public class ProgressBar : MonoBehaviour {
 

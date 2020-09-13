@@ -19,7 +19,7 @@ using System.Linq;
 using UnityEditor;
 #endif
 
-namespace Com.Github.Knose1.Common.UI
+namespace Com.GitHub.Knose1.Common.UI
 {
 	[AddComponentMenu("Common/UI/Code Input", 0)]
 	public class CodeInput : Selectable,

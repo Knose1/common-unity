@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Com.Github.Knose1.Common.UI.Utils {
+namespace Com.GitHub.Knose1.Common.UI.Utils {
 	[RequireComponent(typeof(Image))]
 	public class StartWithRandomColor : MonoBehaviour {
 		[SerializeField] List<Color> colors = new List<Color>();

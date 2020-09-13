@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Com.Github.Knose1.Common.UI.Utils {
+namespace Com.GitHub.Knose1.Common.UI.Utils {
 	[RequireComponent(typeof(RectTransform))]
 	/// <summary>
 	/// A class used to display modalbox

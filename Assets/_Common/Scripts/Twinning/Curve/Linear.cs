@@ -1,10 +1,10 @@
-using Com.Github.Knose1.Common.Twinning.Curve;
+using Com.GitHub.Knose1.Common.Twinning.Curve;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Com.Github.Knose1.Common.Twinning.Curve
+namespace Com.GitHub.Knose1.Common.Twinning.Curve
 {
 	/// <summary>
 	/// Since the linear curve consist of returning the clamped x value, it's more optimised to use GetLinearValue of this class

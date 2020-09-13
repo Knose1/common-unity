@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Com.Github.Knose1.Common
+namespace Com.GitHub.Knose1.Common
 {
 	public class AnimateMaterialGiveToChild : MonoBehaviour
 	{

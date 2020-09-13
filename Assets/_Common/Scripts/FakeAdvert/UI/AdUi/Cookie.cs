@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-namespace Com.Github.Knose1.Common.FakeAdvert.UI.AdUi {
+namespace Com.GitHub.Knose1.Common.FakeAdvert.UI.AdUi {
 	public class Cookie : MonoBehaviour, IEventSystemHandler, IPointerDownHandler
 	{
 		[SerializeField] protected ParticleSystem cookieParticlePrefab;

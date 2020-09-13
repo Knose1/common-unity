@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Com.Github.Knose1.Common.Pooling {
+namespace Com.GitHub.Knose1.Common.Pooling {
 	public class Pool
 	{
 		public const string LOG_PREFIX = "["+nameof(Pool)+"]";
