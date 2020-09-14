@@ -7,6 +7,12 @@ var io = require('socket.io')({
 io.attach(4567);
 
 /**
+ * List of all events :
+ * @namespace PeerToPeerServer
+ */
+
+
+/**
  * @type Array<Room>
  */
 let rooms = [];
@@ -22,7 +28,7 @@ io.on('connection', function(socket){
 		console.log("<"+socket.id+">"+": "+log);
 	}
 
-	socket.on('host', function(){
+	socket.on('host', function(data){
 		logSocket(socket,'host');
 
 		if (getRoomIndexBySocket(socket) != -1) 
@@ -42,7 +48,7 @@ io.on('connection', function(socket){
 		while (getRoomIndexByName(lRoom) != -1) lRoom = generate(5);
 		
 		//Add room in the list
-		rooms.push(new Room(lRoom, socket));
+		rooms.push(new Room(lRoom, socket, ));
 		socket.join(lRoom);
 		socket.emit("roomIdGenerated", {id:lRoom});
 
@@ -121,6 +127,47 @@ io.on('connection', function(socket){
 			}
 
 			socket.to(data.id).emit("message", {message:data.message});
+		});
+
+		socket.on("kick", (data) => {
+			
+			/**
+			 * @typedef KickData
+			 * @property {string} id
+			 */
+
+			/**
+			 * 
+			 * @type {KickData} 
+			 */
+			data;
+
+			let log = "";
+			if (typeof(data) == "object") {
+				log = JSON.stringify(data);
+			} else {
+				log = data;
+			}
+
+			logSocket(socket,'host '+'kick '+log);
+			
+			if (!data)
+			{
+				console.warn("Data is null or undefined");
+				destroy();
+				return;
+			}
+			if (!data.id)
+			{
+				const ID_NOT_SPECIFIED_ERROR = {message : "Id not specified"};
+				logSocket(socket,'host '+'sendMessageTo '+ID_NOT_SPECIFIED_ERROR.message);
+				
+				socket.emit("infoError", ID_NOT_SPECIFIED_ERROR);
+				destroy();
+				return;
+			}
+
+			io.clients(data.id).disconnect(true);
 		});
 
 		socket.on("partyEnd", destroy);
@@ -212,10 +259,20 @@ io.on('connection', function(socket){
 			return;
 		}
 
-		socket.username = data.username;
+		socket.nickname = data.username;
+		socket.join(lRoom);
+
+		let rooms = io.clients(lRoom);
+		if (rooms) 
+		{
+			for (let i = rooms.length - 1; i >= 0; i--) {
+				let lElement = rooms[i].username
+			}	
+			destroy();
+			return;
+		}
 
 		socket.to(lRoom).emit("userJoin", {username:data.username, id:socket.id});
-		socket.join(lRoom);
 		
 
 		//The client send a message to the host
@@ -259,8 +316,6 @@ io.on('connection', function(socket){
 	});
 });
 
-
-
 class Room 
 {
 	/**
@@ -268,9 +323,11 @@ class Room
 	 * @param {string} name 
 	 * @param {SocketIO.Socket} host 
 	 */
-	constructor(name, host) {
+	constructor(name, host, minCapacity, maxCapacity) {
 		this.name = name;
 		this.host = host;
+		this.minCapacity = minCapacity;
+		this.maxCapacity = maxCapacity;
 	}
 }
 

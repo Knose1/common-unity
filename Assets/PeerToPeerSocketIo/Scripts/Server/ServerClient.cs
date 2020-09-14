@@ -14,8 +14,8 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		public string Username { get => _username; set => _username = value; }
 		public string Room { get => _room; set => _room = value; }
 
-		[SerializeField] private string _username;
-		[SerializeField] private string _room;
+		private string _username;
+		private string _room;
 
 		protected override void SocketConnect(SocketIOEvent obj)
 		{

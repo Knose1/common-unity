@@ -6,25 +6,22 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 {
 	public abstract class ServerBehaviour : MonoBehaviour
 	{
-		public enum MessageType
-		{
-			Start,		//Start la partie					//Player
-			Info,	    //Afficher les infos sur mobile	    //string
-			Downgrade,	//Mise à pieds	                    //void
-			RevealRank,	//Afficher les infos sur mobile	    //Dictionnary<string, int>
-			VotePrompt,	//Il faut voter pour la démocration //Dictionnary<string, string>
-			VoteResult	//Un mobile a voté					//Dictionnary<string, int>
-		}
-
 		[Serializable]
+		///<summary>
+		/// A message to be
+		/// Warning
+		///</summary>
 		public struct Message
 		{
 			[SerializeField] private string _raw;
-			[SerializeField] private MessageType _type;
+			[SerializeField] private int _type;
 			public string Raw => _raw;
-			public MessageType Type => _type;
-			
-			public Message(string raw, MessageType type)
+			public int Type => _type;
+
+			public Message(object obj, int type) : this(JsonUtility.ToJson(obj), type)
+			{
+			}
+			public Message(string raw, int type)
 			{
 				this._raw = raw;
 				this._type = type;
@@ -45,7 +42,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 			
 			public static Message FromObject(JSONObject obj)
 			{
-				return new Message(DecodePseudoSafeString(obj.GetField("r").str), (MessageType)obj.GetField("t").n);
+				return new Message(DecodePseudoSafeString(obj.GetField("r").str), (int)obj.GetField("t").n);
 			}
 
 			const string PSEUDO_SAFE_STRING_REPLACE_QUOTE = "(%1)";

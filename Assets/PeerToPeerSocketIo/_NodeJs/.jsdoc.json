@@ -12,7 +12,7 @@
 		"cleverLinks": false,
 		"monospaceLinks": true,
 		"useLongnameInNav": false,
-		"systemName": "Furry",
+		"systemName": "Peer to peer socketIo",
 		"systemSummary": "Documentation",
 		"systemColor": "hsl(150, 56%, 46%)",
 		"stylesheets": ["./_jsdocCustomScripts/index.css", "./_jsdocCustomScripts/dark.css"],
