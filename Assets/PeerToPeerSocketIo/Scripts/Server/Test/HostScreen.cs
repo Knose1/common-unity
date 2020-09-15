@@ -33,7 +33,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server.Test
 		private void Host_OnUserJoin(Player p, ServerHost host)
 		{
 			BtnWithText userUI = Instantiate(userPrefab);
-			userUI.Text = p;
+			userUI.Text = p.UserName;
 			userUI.OnClick += UserUI_OnClick;
 			playersVisual.Add(userUI, p);
 			userUI.transform.SetParent(userNameContainer);

@@ -378,7 +378,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   childByMainAxis: 3
   childBySecondAxis: 100
-  padding: 0.1
+  padding: 0.05
   startCorner: 0
   startAxis: 0
   gridCenter: {x: 0.5, y: 0.5}

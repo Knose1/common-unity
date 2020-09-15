@@ -113,6 +113,12 @@ exports.init = (io, socket) =>
 			let log = Utils.dataToString(data);
 			Utils.logSocket(socket,CLIENT+' '+'sendMessage '+log);
 			
+			if (!initData)
+			{
+				console.warn("Data is null or undefined");
+				return;
+			}
+
 			let host = getRoomHostByName(lRoomId);
 			if (host == null) 
 			{

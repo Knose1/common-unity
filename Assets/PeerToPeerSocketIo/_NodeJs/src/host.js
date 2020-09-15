@@ -57,7 +57,6 @@ exports.init = (io, socket) =>
 			if (!data)
 			{
 				console.warn("Data is null or undefined");
-				destroy();
 				return;
 			}
 			if (!data.id && !data.message)
@@ -66,7 +65,6 @@ exports.init = (io, socket) =>
 				Utils.logSocket(socket,HOST+' '+'sendMessageTo '+ID_AND_MESSAGE_NOT_SPECIFIED_ERROR.message);
 	
 				socket.emit("infoError", ID_AND_MESSAGE_NOT_SPECIFIED_ERROR);
-				destroy();
 				return;
 			}
 			if (!data.id)
@@ -75,9 +73,19 @@ exports.init = (io, socket) =>
 				Utils.logSocket(socket,HOST+' '+'sendMessageTo '+ID_NOT_SPECIFIED_ERROR.message);
 				
 				socket.emit("infoError", ID_NOT_SPECIFIED_ERROR);
-				destroy();
 				return;
 			}
+			
+			let lClientSocket = lRoom.getUserBySocket(data.id);
+			if (!lClientSocket) 
+			{
+				const WRONG_ID_ERROR = {message : "Wrong Id"};
+				Utils.logSocket(socket,HOST+' '+'sendMessageTo '+WRONG_ID_ERROR.message);
+				
+				socket.emit("infoError", WRONG_ID_ERROR);
+				return;
+			}
+
 			if (!data.message)
 			{
 				const MESSAGE_NOT_SPECIFIED_ERROR = {message : "Message not specified"};
@@ -85,7 +93,6 @@ exports.init = (io, socket) =>
 	
 	
 				socket.emit("infoError", MESSAGE_NOT_SPECIFIED_ERROR);
-				destroy();
 				return;
 			}
 	
@@ -112,20 +119,29 @@ exports.init = (io, socket) =>
 			if (!data)
 			{
 				console.warn("Data is null or undefined");
-				destroy();
 				return;
 			}
 			if (!data.id)
 			{
 				const ID_NOT_SPECIFIED_ERROR = {message : "Id not specified"};
-				Utils.logSocket(socket,HOST+' '+'sendMessageTo '+ID_NOT_SPECIFIED_ERROR.message);
+				Utils.logSocket(socket,HOST+' '+'kick '+ID_NOT_SPECIFIED_ERROR.message);
 				
 				socket.emit("infoError", ID_NOT_SPECIFIED_ERROR);
-				destroy();
 				return;
 			}
 	
-			io.clients(data.id).disconnect(true);
+			let lClientSocket = lRoom.getUserBySocket(data.id);
+			if (!lClientSocket) 
+			{
+				const WRONG_ID_ERROR = {message : "Wrong Id"};
+				Utils.logSocket(socket,HOST+' '+'kick '+WRONG_ID_ERROR.message);
+				
+				socket.emit("infoError", WRONG_ID_ERROR);
+				return;
+			}
+
+			lRoom.removeUser(lClientSocket);
+			lClientSocket.disconnect(true);
 		});
 	
 		socket.on("partyEnd", destroy);

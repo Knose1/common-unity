@@ -98,6 +98,15 @@ class Room
 		//User just left
 		socket.to(this.name).emit("userLeave", {username:socket.username, id:socket.id});
 	}
+	
+	/**
+	 * @param {string} socketId
+	 * @return {SocketIO.Socket} socket 
+	 */
+	getUserBySocket(socketId) 
+	{
+		return this.users.find( (s) => s.id == socketId);
+	}
 
 	/**
 	 * 

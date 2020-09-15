@@ -70,7 +70,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		private const string INFO_ERROR = "infoError";
 		private const string DISCONNECT = "disconnect";
 		private const string PARTY_END = "partyEnd";
-		protected const string KICK = "Kick";
+		protected const string KICK = "kick";
 		[SerializeField] protected SocketIOComponent socket;
 
 		protected virtual void Start()

@@ -18,6 +18,16 @@ namespace Com.GitHub.Knose1.Common.UI
 		public Button Btn => _btn;
 		public Text Txt => _txt;
 
+		private void Awake()
+		{
+			_btn.onClick.AddListener(Btn_OnClick);
+		}
+
+		private void Btn_OnClick()
+		{
+			OnClick?.Invoke(this);
+		}
+
 		public string Text
 		{
 			get => _txt.text;
