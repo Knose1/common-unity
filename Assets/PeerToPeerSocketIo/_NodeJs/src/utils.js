@@ -1,5 +1,11 @@
 /**
+ * 
+ * @namespace Utils
+ */
+
+/**
  * If it's an object, stringify it
+ * @memberof Utils
  * @param {any} data 
  * @returns {string | number | boolean}
  */
@@ -16,6 +22,7 @@ function dataToString(data)
 
 /**
  * 
+ * @memberof Utils
  * @param {SocketIO.Socket} socket 
  * @param {string} log 
  */
@@ -26,6 +33,7 @@ function logSocket(socket, log)
 
 /**
  * 
+ * @memberof Utils
  * @param {SocketIO.Socket} socket 
  * @param {string} rawData 
  */

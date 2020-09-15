@@ -4,6 +4,11 @@ const Utils = require('./utils.js');
 const CLIENT = 'client';
 /**
  * 
+ * @namespace Client
+ */
+
+/**
+ * @memberof Client
  * @param {SocketIO.Server} io 
  * @param {SocketIO.Socket} socket 
  */

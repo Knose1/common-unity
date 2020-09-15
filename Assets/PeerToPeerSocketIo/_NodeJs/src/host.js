@@ -7,6 +7,11 @@ const DEFAULT_MAX_CAPACITY = 6;
 const HOST = 'host';
 /**
  * 
+ * @namespace Host
+ */
+
+/**
+ * @memberof Host
  * @param {SocketIO.Server} io 
  * @param {SocketIO.Socket} socket 
  */

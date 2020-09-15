@@ -6,12 +6,16 @@ const shortid = require('shortid');
 class Room 
 {
 	/**
+	 * @memberof Room
+	 * @static
 	 * @type {Array<Room>}
 	 */
 	static list = [];
 	/**
-	 * 
+	 * Constructor
 	 * @param {SocketIO.Socket} host 
+	 * @param {number} minCapacity
+	 * @param {number} maxCapacity
 	 */
 	constructor(host, minCapacity, maxCapacity) {
 		//Get a unique room name
@@ -30,10 +34,18 @@ class Room
 		this.name = lRoomId;
 
 		/**
-		 * 
+		 * @type {SocketIO.Socket}
 		 */
 		this.host = host;
+		
+		/**
+		 * @type {number}
+		 */
 		this.minCapacity = minCapacity;
+		
+		/**
+		 * @type {number}
+		 */
 		this.maxCapacity = maxCapacity;
 		
 		/**
@@ -110,6 +122,7 @@ class Room
 
 	/**
 	 * 
+	 * @static
 	 * @param {string} name 
 	 * @returns {Room}
 	 */
@@ -121,6 +134,7 @@ class Room
 
 	/**
 	 * 
+	 * @static
 	 * @param {string} name 
 	 * @returns {number}
 	 */
@@ -141,6 +155,7 @@ class Room
 
 	/**
 	 * 
+	 * @static
 	 * @param {SocketIO.Socket} host
 	 * @returns {number}
 	 */
@@ -161,6 +176,7 @@ class Room
 
 	/**
 	 * 
+	 * @static
 	 * @param {string} name
 	 * @returns {SocketIO.Socket}
 	 */
@@ -184,6 +200,7 @@ class Room
 
 	/**
 	 * 
+	 * @static
 	 * @param {SocketIO.Socket} socket 
 	 */
 	static isInRoom(socket) 
