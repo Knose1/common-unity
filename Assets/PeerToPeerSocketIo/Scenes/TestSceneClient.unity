@@ -421,7 +421,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1016040345}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 0
   m_Camera: {fileID: 0}
@@ -621,6 +621,21 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 217081125438419213, guid: 1aef7fd70b140cd4588e74c674a804bb,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0.2745
+      objectReference: {fileID: 0}
+    - target: {fileID: 217081125438419213, guid: 1aef7fd70b140cd4588e74c674a804bb,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.2745
+      objectReference: {fileID: 0}
+    - target: {fileID: 217081125438419213, guid: 1aef7fd70b140cd4588e74c674a804bb,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.305
+      objectReference: {fileID: 0}
     - target: {fileID: 217081125578189887, guid: 1aef7fd70b140cd4588e74c674a804bb,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -739,7 +754,7 @@ PrefabInstance:
     - target: {fileID: 217081126545176092, guid: 1aef7fd70b140cd4588e74c674a804bb,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 217081126545176092, guid: 1aef7fd70b140cd4588e74c674a804bb,
         type: 3}

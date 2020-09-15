@@ -1,5 +1,6 @@
 ﻿using SocketIO;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
@@ -13,10 +14,16 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		///</summary>
 		public struct Message
 		{
+
 			[SerializeField] private string _raw;
-			[SerializeField] private int _type;
 			public string Raw => _raw;
+			
+			[SerializeField] private int _type;
 			public int Type => _type;
+
+			private const string RAW = "r";
+			private const string TYPE = "t";
+			const string PSEUDO_SAFE_STRING_REPLACE_QUOTE = "(%1)";
 
 			public Message(object obj, int type) : this(JsonUtility.ToJson(obj), type)
 			{
@@ -32,20 +39,20 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 				return JsonUtility.FromJson<T>(_raw);
 			}
 
+
 			public static JSONObject ToObject(Message msg)
 			{
 				JSONObject toReturn = new JSONObject();
-				toReturn.AddField("r", EncodePseudoSafeString(msg.Raw));
-				toReturn.AddField("t", (int)msg._type);
+				toReturn.AddField(RAW, EncodePseudoSafeString(msg.Raw));
+				toReturn.AddField(TYPE, (int)msg._type);
 				return toReturn;
 			}
 			
 			public static Message FromObject(JSONObject obj)
 			{
-				return new Message(DecodePseudoSafeString(obj.GetField("r").str), (int)obj.GetField("t").n);
+				return new Message(DecodePseudoSafeString(obj.GetField(RAW).str), (int)obj.GetField(TYPE).n);
 			}
 
-			const string PSEUDO_SAFE_STRING_REPLACE_QUOTE = "(%1)";
 			private static string EncodePseudoSafeString(string jsonMsg)
 			{
 				return jsonMsg
@@ -60,31 +67,80 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		}
 
 		public event Action OnSocketOpen;
-		public event Action OnSocketError;
+		public event Action<string> OnSocketError;
 		public event Action OnSocketDisconnect;
 
 		protected const string SEND_MESSAGE = "sendMessage";
 		protected const string MESSAGE = "message";
-		private const string CONNECT = "connect";
-		private const string ERROR = "error";
-		private const string INFO_ERROR = "infoError";
-		private const string DISCONNECT = "disconnect";
-		private const string PARTY_END = "partyEnd";
+		protected const string CONNECT = "connect";
+		protected const string ERROR = "error";
+		protected const string INFO_ERROR = "infoError";
+		protected const string DISCONNECT = "disconnect";
+		protected const string PARTY_END = "partyEnd";
 		protected const string KICK = "kick";
+		protected const string ID = "id";
 		[SerializeField] protected SocketIOComponent socket;
 
-		protected virtual void Start()
+		public bool Connected => socket.IsConnected;
+
+		//Maybe a List<Action<SocketIOHandler>> for the handelers ?
+		private Dictionary<string, Action<SocketIOEvent>> handelers = new Dictionary<string, Action<SocketIOEvent>>();
+		private List<SocketIOEvent> toDo = new List<SocketIOEvent>();
+
+		protected virtual void OnEnable()
 		{
 			if (!socket) socket = FindObjectOfType<SocketIOComponent>();
 
-			socket.On(CONNECT, SocketConnect);
-			socket.On(ERROR, SocketError);
-			socket.On(MESSAGE, SocketMessage);
-			socket.On(INFO_ERROR, SocketInfoError);
-			socket.On(DISCONNECT, SocketDisconnect);
-			socket.On(PARTY_END, SocketPartyEnd);
+			SetHandeler(CONNECT, SocketConnect);
+			SetHandeler(ERROR, SocketError);
+			SetHandeler(MESSAGE, SocketMessage);
+			SetHandeler(INFO_ERROR, SocketInfoError);
+			SetHandeler(DISCONNECT, SocketDisconnect);
+			SetHandeler(PARTY_END, SocketPartyEnd);
 		}
 
+		protected virtual void OnDisable()
+		{
+			RemoveHandeler(CONNECT);
+			RemoveHandeler(ERROR);
+			RemoveHandeler(MESSAGE);
+			RemoveHandeler(INFO_ERROR);
+			RemoveHandeler(DISCONNECT);
+			RemoveHandeler(PARTY_END);
+		}
+
+		protected virtual void Update()
+		{
+			lock (toDo)
+			{
+				for (int i = toDo.Count - 1; i >= 0; i--)
+				{
+					SocketIOEvent evt = toDo[i];
+					handelers[evt.name]?.Invoke(evt);
+				}
+				toDo = new List<SocketIOEvent>();
+			}
+		}
+
+		private void OnAny(SocketIOEvent obj) 
+		{
+			lock (toDo)
+			{
+				toDo.Add(obj);
+			}
+		}
+
+		protected void SetHandeler(string eventName, Action<SocketIOEvent> handeler)
+		{
+			socket.On(eventName, OnAny);
+			handelers.Add(eventName, handeler);
+		}
+
+		protected void RemoveHandeler(string eventName)
+		{
+			socket.Off(eventName, OnAny);
+			handelers.Remove(eventName);
+		}
 
 		public void Connect()
 		{
@@ -122,8 +178,8 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 
 		protected virtual void SocketConnect(SocketIOEvent obj)
 		{
-			OnSocketOpen?.Invoke();
 			Debug.Log("Connect");
+			OnSocketOpen?.Invoke();
 		}
 
 		private void SocketPartyEnd(SocketIOEvent obj)
@@ -133,20 +189,22 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 
 		protected virtual void SocketDisconnect(SocketIOEvent obj)
 		{
-			OnSocketDisconnect?.Invoke();
 			Debug.Log("Disconnect");
+			OnSocketDisconnect?.Invoke();
 		}
 
 		protected virtual void SocketError(SocketIOEvent obj)
 		{
-			OnSocketError?.Invoke();
-			Debug.Log("Error : " + (obj as ErrorSocketIOEvent).error.Message);
+			string message = (obj as ErrorSocketIOEvent).error.Message;
+			Debug.Log("Error : " + message);
+			OnSocketError?.Invoke(message);
 		}
 
 		protected void SocketInfoError(SocketIOEvent obj)
 		{
-			OnSocketError?.Invoke();
-			Debug.Log("Error : " + obj.data[MESSAGE].str);
+			string message = obj.data[MESSAGE].str;
+			Debug.Log("Error : " + message);
+			OnSocketError?.Invoke(message);
 		}
 
 		

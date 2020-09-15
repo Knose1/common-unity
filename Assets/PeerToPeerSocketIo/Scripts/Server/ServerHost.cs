@@ -16,6 +16,15 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		public event OnUserJoinLeaveDelegate OnUserLeave;
 		
 		protected const string SEND_MESSAGE_TO = "sendMessageTo";
+		protected const string ROOM_ID_GENERATED = "roomIdGenerated";
+		protected const string USER_JOIN = "userJoin";
+		protected const string USER_LEAVE = "userLeave";
+		protected const string HOST = "host";
+		protected const string MIN_CAPACITY = "minCapacity";
+		protected const string MAX_CAPACITY = "maxCapacity";
+
+		private const int DEFAULT_MIN_CAPACITY = 1;
+		private const int DEFAULT_MAX_CAPACITY = 6;
 
 		/// <summary>
 		/// Triggered when the connection code is recived
@@ -28,25 +37,37 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		protected List<Player> _players = new List<Player>();
 		public List<Player> Players => _players;
 
-		protected override void Start()
+		[SerializeField] uint minCapacity = DEFAULT_MIN_CAPACITY;
+		[SerializeField] uint maxCapacity = DEFAULT_MAX_CAPACITY;
+
+		protected override void OnEnable()
 		{
-			base.Start();
-			socket.On("roomIdGenerated", SocketGeneratedRoomId);
-			socket.On("userJoin", SocketUserJoin);
-			socket.On("userLeave", SocketUserLeave);
+			base.OnEnable();
+			SetHandeler(ROOM_ID_GENERATED, SocketGeneratedRoomId);
+			SetHandeler(USER_JOIN, SocketUserJoin);
+			SetHandeler(USER_LEAVE, SocketUserLeave);
+		}
+
+		protected override void OnDisable()
+		{
+			base.OnDisable();
 		}
 
 		protected override void SocketConnect(SocketIOEvent obj)
 		{
 			base.SocketConnect(obj);
 			_players = new List<Player>();
-			socket.Emit("host");
+
+			JSONObject json = new JSONObject(JSONObject.Type.OBJECT);
+			json.AddField(MIN_CAPACITY, minCapacity);
+			json.AddField(MAX_CAPACITY, maxCapacity);
+			socket.Emit(HOST);
 		}
 
 		public void Kick(string playerId)
 		{
 			JSONObject json = new JSONObject(JSONObject.Type.OBJECT);
-			json.AddField("id", playerId);
+			json.AddField(ID, playerId);
 
 			socket.Emit(KICK, json);
 		}
@@ -64,7 +85,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 			JSONObject msgObj = Message.ToObject(msg);
 			Debug.Log("Send To " + msg);
 			json.AddField(MESSAGE, msgObj);
-			json.AddField("id", playerId);
+			json.AddField(ID, playerId);
 
 			SendMessageTo(json);
 		}
@@ -83,7 +104,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 
 		private void SocketGeneratedRoomId(SocketIOEvent obj)
 		{
-			_code = obj.data["id"].str;
+			_code = obj.data[ID].str;
 			Debug.Log("Code : " + _code);
 			OnCode?.Invoke(_code);
 		}
@@ -91,7 +112,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		private void SocketUserJoin(SocketIOEvent obj)
 		{
 			string userName = obj.data.GetField("username").str;
-			string id = obj.data.GetField("id").str;
+			string id = obj.data.GetField(ID).str;
 			Debug.Log("UserJoin : "+ userName + "\n" + id);
 
 			Player p = new Player(id, userName);
@@ -102,7 +123,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		private void SocketUserLeave(SocketIOEvent obj)
 		{
 			string userName = obj.data["username"].str;
-			string id = obj.data["id"].str;
+			string id = obj.data[ID].str;
 			Debug.Log("UserLeave : " + userName + "\n" + id);
 
 			Player p = _players.GetPlayerBySocketId(id);
@@ -112,7 +133,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		protected override void SocketMessage(SocketIOEvent obj)
 		{
 			Debug.Log("Recived (host) : "+obj.data);
-			Player p = _players.GetPlayerBySocketId(obj.data["id"].str);
+			Player p = _players.GetPlayerBySocketId(obj.data[ID].str);
 			OnMessage?.Invoke(p, Message.FromObject(obj.data[MESSAGE]), this);
 		}
 	}

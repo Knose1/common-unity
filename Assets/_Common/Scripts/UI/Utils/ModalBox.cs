@@ -83,12 +83,28 @@ namespace Com.GitHub.Knose1.Common.UI.Utils {
 		}
 
 		/// <summary>
+		/// Get the title of the modalbox
+		/// </summary>
+		public string GetTitle()
+		{
+			return title.text;
+		}
+
+		/// <summary>
 		/// Set the content (message) of the modalbox
 		/// </summary>
 		/// <param name="message"></param>
 		public void SetMessage(string message)
 		{
 			this.message.text = message;
+		}
+
+		/// <summary>
+		/// Get the title of the modalbox
+		/// </summary>
+		public string GetMessage()
+		{
+			return message.text;
 		}
 
 		/// <summary>

@@ -11,19 +11,24 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		public delegate void OnMessageDelegate(Message message);
 		public event OnMessageDelegate OnMessage;
 
+		private string _username;
 		public string Username { get => _username; set => _username = value; }
+
+		private string _room;
 		public string Room { get => _room; set => _room = value; }
 
-		private string _username;
-		private string _room;
+		protected const string USERNAME = "username";
+		protected const string ROOM = "room";
+		protected const string CLIENT = "client";
+
 
 		protected override void SocketConnect(SocketIOEvent obj)
 		{
 			base.SocketConnect(obj);
 			JSONObject connect = new JSONObject();
-			connect.AddField("username", _username);
-			connect.AddField("room", _room);
-			socket.Emit("client", connect);
+			connect.AddField(USERNAME, _username);
+			connect.AddField(ROOM, _room);
+			socket.Emit(CLIENT, connect);
 		}
 
 		protected override void SocketMessage(SocketIOEvent obj)

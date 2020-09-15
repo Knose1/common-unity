@@ -988,6 +988,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84dd2d233bac89342bb13b0dce721ed0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  modalBoxPrefab: {fileID: 6671023090340642145, guid: 0ffa47c3943ed5749a847447d6c64383,
+    type: 3}
   client: {fileID: 0}
   btnJoin: {fileID: 217081125438419214}
   inpCode: {fileID: 217081126816792370}

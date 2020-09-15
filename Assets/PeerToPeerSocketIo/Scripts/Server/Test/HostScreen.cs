@@ -1,4 +1,5 @@
 ﻿using Com.GitHub.Knose1.Common.UI;
+using Com.GitHub.Knose1.Common.UI.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,18 +12,54 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server.Test
 {
 	internal sealed class HostScreen : MonoBehaviour
 	{
+		[SerializeField] ModalBox modalBoxPrefab = null;
 		[SerializeField] ServerHost host = null;
 		[SerializeField] RectTransform userNameContainer = null;
 		[SerializeField] Text codeTxt = null;
 		[SerializeField] BtnWithText userPrefab = null;
 
+		ModalBox currentErrorBox = null;
+
 		private Dictionary<BtnWithText, Player> playersVisual = new Dictionary<BtnWithText, Player>();
 
 		private void Awake()
 		{
-			host.OnCode += Host_OnCode; ;
+			host.OnCode += Host_OnCode;
 			host.OnUserJoin += Host_OnUserJoin;
 			host.OnUserLeave += Host_OnUserLeave;
+			host.OnSocketError += Host_OnSocketError;
+			host.OnSocketDisconnect += Host_OnSocketDisconnect;
+		}
+
+		private void OnDestroy()
+		{
+			host.OnCode -= Host_OnCode;
+			host.OnUserJoin -= Host_OnUserJoin;
+			host.OnUserLeave -= Host_OnUserLeave;
+			host.OnSocketError -= Host_OnSocketError;
+			host.OnSocketDisconnect -= Host_OnSocketDisconnect;
+		}
+
+		private void Host_OnSocketError(string error)
+		{
+			if (currentErrorBox)
+			{
+				currentErrorBox.SetTitle(currentErrorBox.GetTitle() + "\n" + error);
+				return;
+			}
+
+			currentErrorBox = ModalBox.CreateSimpleAlert(modalBoxPrefab, transform.parent, error, "Error");
+			currentErrorBox.Show((b) => {
+				Destroy(b.gameObject);
+			});
+		}
+
+		private void Host_OnSocketDisconnect()
+		{
+			ModalBox box = ModalBox.CreateSimpleAlert(modalBoxPrefab, transform.parent, "You've been disconnected");
+			box.Show((b) => {
+				Destroy(b.gameObject);
+			});
 		}
 
 		private void Host_OnCode(string code)

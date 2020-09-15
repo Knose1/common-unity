@@ -524,6 +524,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4636ffe5b708f87409f778efb9c4db68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  modalBoxPrefab: {fileID: 6671023090340642145, guid: 0ffa47c3943ed5749a847447d6c64383,
+    type: 3}
   host: {fileID: 0}
   userNameContainer: {fileID: 8830461308146799790}
   codeTxt: {fileID: 1412102081689786148}
