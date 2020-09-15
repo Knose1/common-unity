@@ -117,3 +117,4 @@ dist
 
 /docs/*
 !/docs/_jsdocCustomScripts/*
+*.meta
