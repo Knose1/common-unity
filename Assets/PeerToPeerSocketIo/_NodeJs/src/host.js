@@ -14,11 +14,12 @@ exports.init = (io, socket) =>
 {
 	socket.on(HOST, function(data){
 
+		
 		if (data == undefined || data == null) data = {};
 
 		Utils.logSocket(socket, HOST);
 		
-		if (Room.getRoomIndexBySocket(socket) != -1) 
+		if (Room.isInRoom(socket)) 
 		{
 			Utils.logSocket(socket, HOST+' '+"socket already has a room");
 			//bro u're in a room, whut u want from mi
@@ -132,16 +133,8 @@ exports.init = (io, socket) =>
 	
 		function destroy() {
 			Utils.logSocket(socket,HOST+' '+'partyEnd or disconnect');
-	
-			//Leave
-			socket.leave(lRoomId);
-	
-			//Host just left
-			socket.to(lRoomId).emit("partyEnd");
-	
+			lRoom.destroy();
 			socket.disconnect(true); //true or false ?
-	
-			rooms.splice(Room.getRoomIndexByName(lRoomId), 1);
 		}
 	});
 };

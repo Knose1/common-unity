@@ -47,35 +47,56 @@ class Room
 		host.emit("roomIdGenerated", {id:lRoomId, minCapacity: minCapacity, maxCapacity: maxCapacity});
 	}
 
+	destroy() 
+	{
+		//Leave
+		this.host.leave(this.name);
+	
+		//Host just left
+		this.host.to(this.name).emit("partyEnd");
+	
+		Room.list.splice(Room.list.indexOf(this), 1);
+	}
+
 	/**
 	 * Return true if a user can be added to the room
 	 * @returns {boolean}
 	 */
-	CanAdd() 
+	canAdd() 
 	{
 		return this.users.length <= this.maxCapacity;
 	}
 
 	/**
 	 * 
-	 * @param {SocketIO.Socket} socket 
+	 * @param {string} username 
 	 */
-	AddUser(socket)
+	isUsernameInRoom(username) 
 	{
-		socket.join(this.name);
-		this.users.push(socket);
-		socket.to(lRoomId).emit("userJoin", {username:data.username, id:socket.id});
+		return this.users.find( (v) => v.username == username);
 	}
 
 	/**
 	 * 
 	 * @param {SocketIO.Socket} socket 
 	 */
-	RemoveUser(socket)
+	addUser(socket)
 	{
 		socket.join(this.name);
+		this.users.push(socket);
+		socket.to(this.name).emit("userJoin", {username:socket.username, id:socket.id});
+	}
+
+	/**
+	 * 
+	 * @param {SocketIO.Socket} socket 
+	 */
+	removeUser(socket)
+	{
 		let lIndex = this.users.indexOf(socket);
 		this.users.splice(lIndex, 1);
+		//User just left
+		socket.to(this.name).emit("userLeave", {username:socket.username, id:socket.id});
 	}
 
 	/**
@@ -150,6 +171,20 @@ class Room
 		}
 
 		return socket;
+	}
+
+	/**
+	 * 
+	 * @param {SocketIO.Socket} socket 
+	 */
+	static isInRoom(socket) 
+	{
+		for (let i = Room.list.length - 1; i >= 0; i--) {
+			let lRoom = Room.list[i];
+			if (lRoom.host == socket || lRoom.users.indexOf(socket) != -1) 
+				return true;
+		}
+		return false;
 	}
 }
 

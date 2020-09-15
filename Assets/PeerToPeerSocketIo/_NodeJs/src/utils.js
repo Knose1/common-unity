@@ -10,6 +10,8 @@ function dataToString(data)
 	} else {
 		log = data;
 	}
+	
+	return log;
 }
 
 /**

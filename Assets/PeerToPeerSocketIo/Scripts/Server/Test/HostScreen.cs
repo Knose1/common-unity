@@ -16,7 +16,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server.Test
 		[SerializeField] Text codeTxt = null;
 		[SerializeField] BtnWithText userPrefab = null;
 
-		private Dictionary<BtnWithText, Player> playersVisual;
+		private Dictionary<BtnWithText, Player> playersVisual = new Dictionary<BtnWithText, Player>();
 
 		private void Awake()
 		{
@@ -33,6 +33,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server.Test
 		private void Host_OnUserJoin(Player p, ServerHost host)
 		{
 			BtnWithText userUI = Instantiate(userPrefab);
+			userUI.Text = p;
 			userUI.OnClick += UserUI_OnClick;
 			playersVisual.Add(userUI, p);
 			userUI.transform.SetParent(userNameContainer);

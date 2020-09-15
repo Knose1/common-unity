@@ -94,9 +94,8 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 			string id = obj.data.GetField("id").str;
 			Debug.Log("UserJoin : "+ userName + "\n" + id);
 
-			Player p = _players.GetPlayerBySocketId(id);
-			if (p)
-
+			Player p = new Player(id, userName);
+			_players.Add(p);
 			OnUserJoin?.Invoke(p, this);
 		}
 
@@ -107,13 +106,6 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 			Debug.Log("UserLeave : " + userName + "\n" + id);
 
 			Player p = _players.GetPlayerBySocketId(id);
-
-			if (p)
-			{
-				p.HasLeftTheGame = true;
-				_players.RemovePlayerBySocketId(p);
-			}
-
 			OnUserLeave?.Invoke(p, this);
 		}
 

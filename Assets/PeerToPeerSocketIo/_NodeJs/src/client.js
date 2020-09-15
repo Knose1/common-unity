@@ -1,6 +1,7 @@
 const Room = require('./Room.js');
 const Utils = require('./utils.js');
 
+const CLIENT = 'client';
 /**
  * 
  * @param {SocketIO.Server} io 
@@ -8,10 +9,17 @@ const Utils = require('./utils.js');
  */
 exports.init = (io, socket) => 
 {
-	socket.on('client', function(data){
+	socket.on(CLIENT, function(initData){
 		
-		let log = Utils.dataToString(data);
-		Utils.logSocket(socket,'client '+log);
+		if (Room.isInRoom(socket)) 
+		{
+			Utils.logSocket(socket, CLIENT+' '+"socket already has a room");
+			//bro u're in a room, whut u want from mi
+			return;
+		}
+
+		let log = Utils.dataToString(initData);
+		Utils.logSocket(socket,CLIENT+' '+log);
 
 		/**
 		 * @typedef JoinData
@@ -22,84 +30,88 @@ exports.init = (io, socket) =>
 		/**
 		 * @type {JoinData}
 		 */
-		data;
-		//let data = TryParseJson(socket, rawData);
+		initData;
 
-		if (!data)
+		//CHECKING DATA OBJECT
+		if (!initData)
 		{
 			console.warn("Data is null or undefined");
 			destroy();
 			return;
 		}
-		if (!data.username && !data.room)
+		if (!initData.username && !initData.room)
 		{
 			const USERNAME_AND_ROOM_NOT_SPECIFIED_ERROR = {message : "Username and Room not specified"};
-			Utils.logSocket(socket,'client '+USERNAME_AND_ROOM_NOT_SPECIFIED_ERROR.message);
+			Utils.logSocket(socket,CLIENT+' '+USERNAME_AND_ROOM_NOT_SPECIFIED_ERROR.message);
 		
 			socket.emit("infoError", USERNAME_AND_ROOM_NOT_SPECIFIED_ERROR);
 			destroy();
 			return;
 		}
-		if (!data.username)
+		if (!initData.username)
 		{
 			const USERNAME_NOT_SPECIFIED_ERROR = {message : "Username not specified"};
-			Utils.logSocket(socket,'client '+USERNAME_NOT_SPECIFIED_ERROR.message);
+			Utils.logSocket(socket,CLIENT+' '+USERNAME_NOT_SPECIFIED_ERROR.message);
 			
 			socket.emit("infoError", USERNAME_NOT_SPECIFIED_ERROR);
 			destroy();
 			return;
 		}
-		if (!data.room)
+		if (!initData.room)
 		{
 			const ROOM_NOT_SPECIFIED_ERROR = {message : "Room not specified"};
-			Utils.logSocket(socket,'client '+ROOM_NOT_SPECIFIED_ERROR.message);
+			Utils.logSocket(socket,CLIENT+' '+ROOM_NOT_SPECIFIED_ERROR.message);
 			
 			socket.emit("infoError", ROOM_NOT_SPECIFIED_ERROR);
 			destroy();
 			return;
 		}
 
+		
+		//CHECKING SERVER DATAS
 		/**
 		 * @type {string}
 		 */
-		var lRoomId = data.room;
-		let currentRoom = Room.getRoomByName(lRoomId);
-		if (currentRoom == null)
+		var lRoomId = initData.room;
+		let lRoom = Room.getRoomByName(lRoomId);
+		if (lRoom == null)
 		{
 			const ROOM_DONT_EXIST_ERROR = {message : "Room doesn't exist"};
-			Utils.logSocket(socket,'client '+ROOM_DONT_EXIST_ERROR.message);
+			Utils.logSocket(socket,CLIENT+' '+ROOM_DONT_EXIST_ERROR.message);
 			
 			socket.emit("infoError", ROOM_DONT_EXIST_ERROR);
 			destroy();
 			return;
 		}
 		
-		if (!currentRoom.CanAdd())
+		let userName = socket.username = initData.username;
+		if (lRoom.isUsernameInRoom(userName)) 
 		{
-			const ROOM_DONT_EXIST_ERROR = {message : "Room doesn't exist"};
-			Utils.logSocket(socket,'client '+ROOM_DONT_EXIST_ERROR.message);
+			const ROOM_FULL_ERROR = {message : "Username already taken"};
+			Utils.logSocket(socket,CLIENT+' '+ROOM_FULL_ERROR.message);
 			
-			socket.emit("infoError", ROOM_DONT_EXIST_ERROR);
+			socket.emit("infoError", ROOM_FULL_ERROR);
 			destroy();
 			return;
 		}
 
-		let userName = socket.nickname = data.username;
-		socket.join(lRoomId);
+		if (!lRoom.canAdd())
+		{
+			const ROOM_FULL_ERROR = {message : "Room is full"};
+			Utils.logSocket(socket,CLIENT+' '+ROOM_FULL_ERROR.message);
+			
+			socket.emit("infoError", ROOM_FULL_ERROR);
+			destroy();
+			return;
+		}
 
+		lRoom.addUser(socket); //JOIN THE ROOM
 		
-
 		//The client send a message to the host
-		socket.on("sendMessage", (rawDat) => 
+		socket.on("sendMessage", (data) => 
 		{
-			let log = "";
-			if (typeof(rawDat) == "object") {
-				log = JSON.stringify(rawDat);
-			} else {
-				log = rawDat;
-			}
-
-			Utils.logSocket(socket,'client '+'sendMessage '+log);
+			let log = Utils.dataToString(data);
+			Utils.logSocket(socket,CLIENT+' '+'sendMessage '+log);
 			
 			let host = getRoomHostByName(lRoomId);
 			if (host == null) 
@@ -107,7 +119,7 @@ exports.init = (io, socket) =>
 				console.warn("Room ["+lRoomId+"] Host socket is null");
 				return;
 			}
-			socket.to(host.emit("message", {id: socket.id, message: rawDat.message}));
+			socket.to(host.emit("message", {id: socket.id, message: data.message}));
 		});
 
 		socket.on("disconnect", userLeave);
@@ -115,15 +127,12 @@ exports.init = (io, socket) =>
 
 
 		function userLeave() {
-			Utils.logSocket(socket,'client '+'disconnect or partyEnd');
-			
-			//User just left
-			socket.to(lRoomId).emit("userLeave", {username:data.username, id:socket.id});
-			
+			Utils.logSocket(socket,CLIENT+' '+'disconnect or partyEnd');
 			destroy();
 		}
 
 		function destroy() {
+			if (lRoom) lRoom.removeUser(socket);
 			socket.disconnect(true); //true or false ?
 		}
 		
