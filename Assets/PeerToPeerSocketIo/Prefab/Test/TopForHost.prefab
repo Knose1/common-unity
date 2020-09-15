@@ -49,7 +49,7 @@ GameObject:
   - component: {fileID: 1209970803007816485}
   - component: {fileID: 1412102081689786148}
   m_Layer: 5
-  m_Name: Text
+  m_Name: CodeTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -526,7 +526,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   host: {fileID: 0}
   userNameContainer: {fileID: 8830461308146799790}
-  textPrefab: {fileID: 7133901906458743688, guid: 6fa19fda395056a4aafe4f419a2ba31f,
+  codeTxt: {fileID: 1412102081689786148}
+  userPrefab: {fileID: 5700212253490690568, guid: 6fa19fda395056a4aafe4f419a2ba31f,
     type: 3}
 --- !u!1 &8830461308753247304
 GameObject:

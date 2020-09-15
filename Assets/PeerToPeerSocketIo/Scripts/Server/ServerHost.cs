@@ -16,7 +16,11 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		public event OnUserJoinLeaveDelegate OnUserLeave;
 		
 		protected const string SEND_MESSAGE_TO = "sendMessageTo";
-		public event Action<string> OnId;
+
+		/// <summary>
+		/// Triggered when the connection code is recived
+		/// </summary>
+		public event Action<string> OnCode;
 
 		protected string _code = default;
 		public string Code => _code;
@@ -37,6 +41,14 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 			base.SocketConnect(obj);
 			_players = new List<Player>();
 			socket.Emit("host");
+		}
+
+		public void Kick(string playerId)
+		{
+			JSONObject json = new JSONObject(JSONObject.Type.OBJECT);
+			json.AddField("id", playerId);
+
+			socket.Emit(KICK, json);
 		}
 
 		/// <summary>
@@ -73,7 +85,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		{
 			_code = obj.data["id"].str;
 			Debug.Log("Code : " + _code);
-			OnId?.Invoke(_code);
+			OnCode?.Invoke(_code);
 		}
 
 		private void SocketUserJoin(SocketIOEvent obj)

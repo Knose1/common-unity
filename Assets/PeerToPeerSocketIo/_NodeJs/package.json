@@ -1,5 +1,5 @@
 {
-	"name": "furry_server",
+	"name": "peer_to_peer_socket_io_server",
 	"version": "1.0.0",
 	"description": "",
 	"main": "main.js",

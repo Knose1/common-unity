@@ -12,7 +12,29 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server.Test
 	{
 		[SerializeField] ServerClient client = null;
 		[SerializeField] Button btnJoin = null;
-		[SerializeField] Input inpCode;
-		[SerializeField] Input inpUserName;
+		[SerializeField] InputField inpCode = null;
+		[SerializeField] InputField inpUserName = null;
+
+		private void Awake()
+		{
+			inpCode.onValueChanged.AddListener(InpCode_OnValueChanged);
+			inpUserName.onValueChanged.AddListener(InpUserName_OnValueChanged);
+			btnJoin.onClick.AddListener(BtnJoin_OnClick);
+		}
+
+		private void InpCode_OnValueChanged(string arg0)
+		{
+			client.Room = arg0;
+		}
+
+		private void InpUserName_OnValueChanged(string arg0)
+		{
+			client.Username = arg0;
+		}
+
+		private void BtnJoin_OnClick()
+		{
+			client.Connect();
+		}
 	}
 }

@@ -46,28 +46,16 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 			}
 
 			const string PSEUDO_SAFE_STRING_REPLACE_QUOTE = "(%1)";
-			/*const string PSEUDO_SAFE_STRING_REPLACE_OPEN_BRACKET = "(%2)";
-			const string PSEUDO_SAFE_STRING_REPLACE_CLOSE_BRACKET = "(%3)";
-			const string PSEUDO_SAFE_STRING_REPLACE_COMA = "(%4)";
-			const string PSEUDO_SAFE_STRING_REPLACE_DOUBLE_DOT = "(%5)";*/
 			private static string EncodePseudoSafeString(string jsonMsg)
 			{
 				return jsonMsg
 					.Replace("\"", PSEUDO_SAFE_STRING_REPLACE_QUOTE);
-				/*.Replace("{", PSEUDO_SAFE_STRING_REPLACE_OPEN_BRACKET)
-				.Replace("}", PSEUDO_SAFE_STRING_REPLACE_CLOSE_BRACKET)
-				.Replace(",", PSEUDO_SAFE_STRING_REPLACE_COMA)
-				.Replace(":", PSEUDO_SAFE_STRING_REPLACE_DOUBLE_DOT);*/
 			}
 
 			private static string DecodePseudoSafeString(string jsonMsg)
 			{
 				return jsonMsg
 					.Replace(PSEUDO_SAFE_STRING_REPLACE_QUOTE, "\"");
-				/*.Replace(PSEUDO_SAFE_STRING_REPLACE_OPEN_BRACKET, "{")
-				.Replace(PSEUDO_SAFE_STRING_REPLACE_CLOSE_BRACKET, "}")
-				.Replace(PSEUDO_SAFE_STRING_REPLACE_COMA, ",")
-				.Replace(PSEUDO_SAFE_STRING_REPLACE_DOUBLE_DOT, ":");*/
 			}
 		}
 
@@ -82,6 +70,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		private const string INFO_ERROR = "infoError";
 		private const string DISCONNECT = "disconnect";
 		private const string PARTY_END = "partyEnd";
+		protected const string KICK = "Kick";
 		[SerializeField] protected SocketIOComponent socket;
 
 		protected virtual void Start()
