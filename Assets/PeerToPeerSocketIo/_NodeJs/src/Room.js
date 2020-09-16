@@ -106,6 +106,8 @@ class Room
 	removeUser(socket)
 	{
 		let lIndex = this.users.indexOf(socket);
+		if (lIndex == -1) return;
+
 		this.users.splice(lIndex, 1);
 		//User just left
 		socket.to(this.name).emit("userLeave", {username:socket.username, id:socket.id});
@@ -115,7 +117,7 @@ class Room
 	 * @param {string} socketId
 	 * @return {SocketIO.Socket} socket 
 	 */
-	getUserBySocket(socketId) 
+	getUserBySocketId(socketId) 
 	{
 		return this.users.find( (s) => s.id == socketId);
 	}

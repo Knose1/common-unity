@@ -81,7 +81,7 @@ exports.init = (io, socket) =>
 				return;
 			}
 			
-			let lClientSocket = lRoom.getUserBySocket(data.id);
+			let lClientSocket = lRoom.getUserBySocketId(data.id);
 			if (!lClientSocket) 
 			{
 				const WRONG_ID_ERROR = {message : "Wrong Id"};
@@ -135,7 +135,7 @@ exports.init = (io, socket) =>
 				return;
 			}
 	
-			let lClientSocket = lRoom.getUserBySocket(data.id);
+			let lClientSocket = lRoom.getUserBySocketId(data.id);
 			if (!lClientSocket) 
 			{
 				const WRONG_ID_ERROR = {message : "Wrong Id"};

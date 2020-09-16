@@ -2,7 +2,7 @@
 /// Author : Knose1
 /// Date : 06/06/2020 12:19
 ///-----------------------------------------------------------------
-#define KNOSE_BETTER_GRID_TWINNING
+//#define KNOSE_BETTER_GRID_TWINNING
 
 using DG.Tweening;
 using DG.Tweening.Core;
@@ -19,7 +19,8 @@ namespace Com.GitHub.Knose1.Common.UI
 		protected const string BETTER_GRID_DEBUG_TAG = "["+nameof(BetterGrid)+"]";
 
 		[SerializeField] int childByMainAxis = 10;
-		[SerializeField] int childBySecondAxis = 10;
+		[SerializeField] int minimumChildSecondAxis = 0;
+		[SerializeField] int maximumChildSecondAxis = 10;
 		[SerializeField, Range(0,1)] float padding = 0;
 		[SerializeField] Corner startCorner = default;
 		[SerializeField] Axis startAxis = default;
@@ -54,6 +55,7 @@ namespace Com.GitHub.Knose1.Common.UI
 				MoveGridDown(null);
 			}
 #endif
+			minimumChildSecondAxis = Mathf.Clamp(minimumChildSecondAxis, 0, maximumChildSecondAxis);
 		}
 #endif
 
@@ -126,7 +128,7 @@ namespace Com.GitHub.Knose1.Common.UI
 		public void GetSecondAxis(out int length, out int elementCount)
 		{
 			GetUnclampedSecondAxis(out length, out elementCount);
-			elementCount = Mathf.Min(elementCount, childBySecondAxis);
+			elementCount = Mathf.Min(elementCount, maximumChildSecondAxis);
 		}
 
 		/// <summary>
@@ -166,6 +168,9 @@ namespace Com.GitHub.Knose1.Common.UI
 		{
 			GetUnclampedSecondAxis(out int _, out int unclampedColCount);
 			GetSecondAxis(out int __, out int colCount);
+
+			colCount = Mathf.Max(minimumChildSecondAxis, colCount);
+			unclampedColCount = Mathf.Max(minimumChildSecondAxis, unclampedColCount);
 
 			switch (startCorner)
 			{
@@ -255,17 +260,17 @@ namespace Com.GitHub.Knose1.Common.UI
 				List<GameObject> nextVisibleLine = new List<GameObject>();
 
 				//maxVisibleCol + 1 will be visible so maxVisibleCol + 2 the nextVisibleLine
-				int startIndex = Mathf.Min(colCount, childBySecondAxis + 2);
+				int startIndex = Mathf.Min(colCount, maximumChildSecondAxis + 2);
 
 				//If there is no maxVisibleCol + 2, then the raw 0 will be the nextVisibleLine
-				if (startIndex == childBySecondAxis + 1) startIndex = 0;
+				if (startIndex == maximumChildSecondAxis + 1) startIndex = 0;
 
 				for (int i = 0; i < childByMainAxis; i++)
 				{
 					nextVisibleLine.Add(transform.GetChild(i + startIndex).gameObject);
 				}
 
-				int colCountClamped = Mathf.Min(colCount, childBySecondAxis);
+				int colCountClamped = Mathf.Min(colCount, maximumChildSecondAxis);
 
 				Vector2 endPos = new Vector2(0, -rectTransform.rect.height / colCountClamped);
 
@@ -294,7 +299,7 @@ namespace Com.GitHub.Knose1.Common.UI
 						GameObject child = nextVisibleLine[i];
 
 						child.gameObject.SetActive(true);
-						DispatchAddedEvent(child.GetComponentsInChildren<IBetterGridElement>(), i, childBySecondAxis);
+						DispatchAddedEvent(child.GetComponentsInChildren<IBetterGridElement>(), i, maximumChildSecondAxis);
 					}
 
 					for (int i = 0; i < transform.childCount; i++)

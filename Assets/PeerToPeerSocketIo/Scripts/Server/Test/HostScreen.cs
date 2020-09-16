@@ -72,11 +72,10 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server.Test
 
 		private void Host_OnUserJoin(Player p, ServerHost host)
 		{
-			BtnWithText userUI = Instantiate(userPrefab);
+			BtnWithText userUI = Instantiate(userPrefab, userNameContainer.transform);
 			userUI.Text = p.UserName;
 			userUI.OnClick += UserUI_OnClick;
 			playersVisual.Add(userUI, p);
-			userUI.transform.SetParent(userNameContainer);
 		}
 
 		private void UserUI_OnClick(BtnWithText userUI)
