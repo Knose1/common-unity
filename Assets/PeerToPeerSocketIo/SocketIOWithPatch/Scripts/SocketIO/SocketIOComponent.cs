@@ -70,7 +70,7 @@ namespace SocketIO
 		private Decoder decoder;
 		private Parser parser;
 
-		private Dictionary<string, List<Action<SocketIOEvent>>> handlers;
+		private Dictionary<string, List<Action<SocketIOEvent>>> handlers = new Dictionary<string, List<Action<SocketIOEvent>>>();
 		private List<Ack> ackList;
 
 		private int packetId;

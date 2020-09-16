@@ -19,6 +19,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server.Test
 		[SerializeField] BtnWithText userPrefab = null;
 
 		ModalBox currentErrorBox = null;
+		ModalBox currentWarnBox = null;
 
 		private Dictionary<BtnWithText, Player> playersVisual = new Dictionary<BtnWithText, Player>();
 
@@ -42,6 +43,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server.Test
 
 		private void Host_OnSocketError(string error)
 		{
+			if (currentWarnBox) Destroy(currentWarnBox.gameObject);
 			if (currentErrorBox)
 			{
 				currentErrorBox.SetTitle(currentErrorBox.GetTitle() + "\n" + error);
@@ -56,8 +58,9 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server.Test
 
 		private void Host_OnSocketDisconnect()
 		{
-			ModalBox box = ModalBox.CreateSimpleAlert(modalBoxPrefab, transform.parent, "You've been disconnected");
-			box.Show((b) => {
+			if (currentErrorBox != null) return;
+			currentWarnBox = ModalBox.CreateSimpleAlert(modalBoxPrefab, transform.parent, "You've been disconnected");
+			currentWarnBox.Show((b) => {
 				Destroy(b.gameObject);
 			});
 		}

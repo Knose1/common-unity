@@ -42,6 +42,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server.Test
 
 		private void Client_OnSocketError(string error)
 		{
+			if (currentWarnBox) Destroy(currentWarnBox.gameObject);
 			if (currentErrorBox)
 			{
 				currentErrorBox.SetTitle(currentErrorBox.GetTitle() + "\n" + error);
@@ -56,8 +57,9 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server.Test
 
 		private void Client_OnSocketDisconnect()
 		{
-			ModalBox box = ModalBox.CreateSimpleAlert(modalBoxPrefab, transform.parent, "You've been disconnected");
-			box.Show((b) => {
+			if (currentErrorBox != null) return;
+			currentWarnBox = ModalBox.CreateSimpleAlert(modalBoxPrefab, transform.parent, "You've been disconnected");
+			currentWarnBox.Show((b) => {
 				Destroy(b.gameObject);
 			});
 		}
