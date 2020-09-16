@@ -70,7 +70,7 @@ namespace SocketIO
 		private Decoder decoder;
 		private Parser parser;
 
-		private Dictionary<string, List<Action<SocketIOEvent>>> handlers = new Dictionary<string, List<Action<SocketIOEvent>>>();
+		private Dictionary<string, List<Action<SocketIOEvent>>> handlers;
 		private List<Ack> ackList;
 
 		private int packetId;
@@ -187,8 +187,14 @@ namespace SocketIO
 
 		public void On(string ev, Action<SocketIOEvent> callback)
 		{
+			if (handlers == null)
+			{
+				Debug.LogWarning("The \""+nameof(On)+"\" methode can only be called after the unity \""+nameof(Start)+"\" methode has been called ");
+				handlers = new Dictionary<string, List<Action<SocketIOEvent>>>();
+			}
+
 			if (!handlers.ContainsKey(ev)) {
-				handlers[ev] = new List<Action<SocketIOEvent>>();
+				handlers.Add(ev,new List<Action<SocketIOEvent>>());
 			}
 			handlers[ev].Add(callback);
 		}

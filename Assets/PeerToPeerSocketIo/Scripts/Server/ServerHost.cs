@@ -40,17 +40,17 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		[SerializeField] uint minCapacity = DEFAULT_MIN_CAPACITY;
 		[SerializeField] uint maxCapacity = DEFAULT_MAX_CAPACITY;
 
-		protected override void OnEnable()
+		protected override void Start()
 		{
-			base.OnEnable();
+			base.Start();
 			SetHandeler(ROOM_ID_GENERATED, SocketGeneratedRoomId);
 			SetHandeler(USER_JOIN, SocketUserJoin);
 			SetHandeler(USER_LEAVE, SocketUserLeave);
 		}
 
-		protected override void OnDisable()
+		protected override void OnDestroy()
 		{
-			base.OnDisable();
+			base.OnDestroy();
 		}
 
 		protected override void SocketConnect(SocketIOEvent obj)

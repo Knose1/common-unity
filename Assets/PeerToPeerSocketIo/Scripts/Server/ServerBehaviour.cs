@@ -87,7 +87,15 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 		private Dictionary<string, Action<SocketIOEvent>> handelers = new Dictionary<string, Action<SocketIOEvent>>();
 		private List<SocketIOEvent> toDo = new List<SocketIOEvent>();
 
-		protected virtual void OnEnable()
+		private void Awake()
+		{
+			lock (handelers)
+			{
+				handelers = new Dictionary<string, Action<SocketIOEvent>>();
+			}
+		}
+
+		protected virtual void Start()
 		{
 			if (!socket) socket = FindObjectOfType<SocketIOComponent>();
 
@@ -99,7 +107,7 @@ namespace Com.GitHub.Knose1.PeerToPeerSocketIo.Server
 			SetHandeler(PARTY_END, SocketPartyEnd);
 		}
 
-		protected virtual void OnDisable()
+		protected virtual void OnDestroy()
 		{
 			RemoveHandeler(CONNECT);
 			RemoveHandeler(ERROR);

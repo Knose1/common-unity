@@ -27,8 +27,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 6674953007704339499}
   - {fileID: 3190998414376147159}
+  - {fileID: 6674953007704339499}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -61,7 +61,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2800524364228952959}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2738616827893154349
 MonoBehaviour:
@@ -76,6 +76,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   socket: {fileID: 3190998414365192471}
+  minCapacity: 1
+  maxCapacity: 6
 --- !u!1001 &8086277085420498999
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -126,7 +128,7 @@ PrefabInstance:
     - target: {fileID: 6660980032018000096, guid: 390e023d7f05cbc40b4001fe7d910faf,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6660980032018000096, guid: 390e023d7f05cbc40b4001fe7d910faf,
         type: 3}
