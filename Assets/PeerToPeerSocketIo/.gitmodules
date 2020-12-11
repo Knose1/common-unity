@@ -1,0 +1,3 @@
+[submodule "Nodejs"]
+	path = ../_Nodejs
+	url = git@github.com:Knose1/PeerToPeerSocketIo_NodeJs.git

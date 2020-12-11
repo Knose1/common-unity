@@ -13,7 +13,7 @@ namespace Com.GitHub.Knose1.Common.UI.Utils {
 
 		[SerializeField] public RectTransform outerBar;
 		[SerializeField] public RectTransform innerBar;
-		[SerializeField, Tooltip("The progress between 0 and 1")] protected float _progress = 0;
+		[SerializeField, Range(0,1), Tooltip("The progress between 0 and 1")] protected float _progress = 0;
 
 		/// <summary>
 		/// The progress between 0 and 1

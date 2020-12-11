@@ -4,8 +4,10 @@
 ///-----------------------------------------------------------------
 //#define KNOSE_BETTER_GRID_TWINNING
 
+#if KNOSE_BETTER_GRID_TWINNING
 using DG.Tweening;
 using DG.Tweening.Core;
+#endif
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.UI.GridLayoutGroup;
@@ -38,8 +40,9 @@ namespace Com.GitHub.Knose1.Common.UI
 #endif
 		protected RectTransform rectTransform;
 
+#if KNOSE_BETTER_GRID_TWINNING
 		private bool isMoving = false;
-
+#endif
 		private void Awake()
 		{
 			rectTransform = transform as RectTransform;
