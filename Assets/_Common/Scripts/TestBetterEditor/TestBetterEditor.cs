@@ -10,18 +10,26 @@ namespace Com.Github.Knose1.Common.TestBetterEditor
 	[CustomGUI(nameof(CustomGui)), Serializable]
 	public class Hello
 	{
+		[NonSerialized] public bool fadeG;
 		[NonSerialized] public Vector3 sum;
 		private static readonly Vector3 vector3 = default;
 		[SerializeField] Vector3 v1 = vector3;
 		[SerializeField] Vector3 v2 = vector3;
 		[SerializeField] Vector3 v3 = vector3;
+		[SerializeField, Range(0,1)] float f = 1;
 
-		private bool folded;
+		bool flipFlop;
 		private void CustomGui(UnityEngine.Object target, CustomGUIAttribute.EditorGuiInfo editorGuiInfo)
 		{
-			if (folded = UnityEditor.EditorGUILayout.Foldout(folded, editorGuiInfo.property.displayName))
+			f = UnityEditor.EditorGUILayout.Slider("f", f, 0, 1);
+
+			bool openCondition = f != 0;
+			bool openedInput;
+			if (openedInput = UnityEditor.EditorGUILayout.Foldout(openCondition, editorGuiInfo.property.displayName))
 			{
 				UnityEditor.EditorGUI.indentLevel += 1;
+				fadeG = UnityEditor.EditorGUILayout.BeginFadeGroup(f);
+
 				v1 = UnityEditor.EditorGUILayout.Vector3Field(nameof(v1), v1);
 				v2 = UnityEditor.EditorGUILayout.Vector3Field(nameof(v2), v2);
 				v3 = UnityEditor.EditorGUILayout.Vector3Field(nameof(v3), v3);
@@ -31,10 +39,21 @@ namespace Com.Github.Knose1.Common.TestBetterEditor
 				UnityEditor.EditorGUILayout.Vector3Field("sum", sum = v1 + v2 + v3);
 				GUI.enabled = isEnabled;
 
+				UnityEditor.EditorGUILayout.EndFadeGroup();
+
+				GUI.enabled = false;
+				UnityEditor.EditorGUILayout.Toggle("fadeG", fadeG);
+				GUI.enabled = isEnabled;
+
 				UnityEditor.EditorGUI.indentLevel -= 1;
 			}
 			//UnityEditor.EditorGUILayout.EndFoldoutHeaderGroup();
-			
+			if (openedInput != openCondition) flipFlop = !flipFlop;
+
+			if (!flipFlop) f += Time.deltaTime / 5;
+			if (flipFlop) f -= Time.deltaTime / 5;
+
+			f = Mathf.Clamp(f, 0, 1);
 		}
 	}
 
@@ -46,7 +65,7 @@ namespace Com.Github.Knose1.Common.TestBetterEditor
 		public int intValue = 1;
 		[EndFolder(EndFolderAttribute.Position.After)]
 		public uint uintValue = 1;
-		/*
+		
 		[Header("Disable")]
 		[Folder("Common")]
 		[Disabled()] public float disabled;
@@ -95,7 +114,7 @@ namespace Com.Github.Knose1.Common.TestBetterEditor
 		[EndFolder()]
 		[EndFolder(EndFolderAttribute.Position.After)]
 		public Hello customGUIClass;
-		*/
+		
 #if UNITY_EDITOR
 		private static void CustomGUI_GUI(UnityEngine.Object target, CustomGUIAttribute.EditorGuiInfo editorGuiInfo)
 		{

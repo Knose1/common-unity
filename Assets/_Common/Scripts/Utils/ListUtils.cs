@@ -13,6 +13,8 @@ namespace Com.GitHub.Knose1.Common.Utils
 
 		public static T TryGetOrAddValue<T>(this List<T> list, int i, T defaultValue = default)
 		{
+			if (list is null) list = new List<T>();
+
 			try
 			{
 				var _ = list[i];

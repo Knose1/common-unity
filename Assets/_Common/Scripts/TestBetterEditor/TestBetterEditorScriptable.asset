@@ -16,3 +16,32 @@ MonoBehaviour:
   floatValue: 1.1
   intValue: 1
   uintValue: 1
+  disabled: 0
+  disabledInEditor: 0
+  disabledInRuntime: 0
+  disabledOnBool: 0
+  disabledOnEqualFloat: 0
+  disabledOnEqualInferiorFloat: 0
+  disabledOnEqualSuperiorFloat: 0
+  disabledOnNotEqualFloat: 0
+  disabledOnInferiorFloat: 0
+  disabledOnSuperiorFloat: 0
+  disabledOnEqualInt: 0
+  disabledOnEqualInferiorInt: 0
+  disabledOnEqualSuperiorInt: 0
+  disabledOnNotEqualInt: 0
+  disabledOnInferiorInt: 0
+  disabledOnSuperiorInt: 0
+  disabledOnEqualUInt: 0
+  disabledOnEqualInferiorUInt: 0
+  disabledOnEqualSuperiorUInt: 0
+  disabledOnNotEqualUInt: 0
+  disabledOnInferiorUInt: 0
+  disabledOnSuperiorUInt: 0
+  disabledOnFunction: 0
+  customGUI: 0
+  customGUIClass:
+    v1: {x: 0, y: 0, z: 0}
+    v2: {x: 0.36, y: 0, z: 0}
+    v3: {x: 0, y: 0, z: 0}
+    f: 0

@@ -60,8 +60,10 @@ namespace Com.Github.Knose1.Common.TestBetterEditor
 		[DisabledOnFunction(false, nameof(DisableFunction))] public float disabledOnFunction;
 
 		[Folder("CustomGui")]
+		[Folder("CustomGu2")]
 		[CustomGUI(nameof(CustomGUI_GUI))] public float customGUI;
 		
+		[EndFolder()]
 		[EndFolder()]
 		[EndFolder(EndFolderAttribute.Position.After)]
 		public Hello customGUIClass;

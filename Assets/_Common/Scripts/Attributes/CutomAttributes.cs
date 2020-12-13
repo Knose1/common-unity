@@ -497,29 +497,30 @@ namespace Com.GitHub.Knose1.Common.Attributes
 	public class FolderAttribute : FolderBase
 	{
 		[Flags]
-		public enum FolderType
+		public enum FolderType : int
 		{
-			Default = 1 << 1,
-			Header = 1 << 2,
-			CheckBox  = 1 << 3,
-			Fade  = 1 << 4,
+			None = 0,
+			Default = 1 << 0,
+			Header = 1 << 1,
+			CheckBox  = 1 << 2,
+			Fade  = 1 << 3
 		}
 
 #if UNITY_EDITOR
 		public readonly string name;
-		public readonly bool foldedByDefault;
+		public readonly bool openedByDefault;
 		public readonly FolderType folderType;
-		public readonly float fadeTime;
+		public readonly float foldTime;
 #endif
-		public FolderAttribute(string name, bool foldedByDefault = false, bool isHeader = false, float fadeTime = 1)
+		public FolderAttribute(string name, bool openedByDefault = true, bool isHeader = false, float foldTime = 0.02f)
 		{
 #if UNITY_EDITOR
 			this.name = name;
-			this.foldedByDefault = foldedByDefault;
+			this.openedByDefault = openedByDefault;
 			this.folderType = isHeader ? FolderType.Header : FolderType.Default;
-			this.fadeTime = fadeTime;
+			this.foldTime = foldTime;
 
-			if (fadeTime != 0)
+			if (foldTime != 0)
 			{
 				this.folderType |= FolderType.Fade;
 			}
