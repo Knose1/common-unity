@@ -8,6 +8,7 @@
 using DG.Tweening;
 using DG.Tweening.Core;
 #endif
+using Com.GitHub.Knose1.Common.Attributes.PropertyAttributes;
 using Com.GitHub.Knose1.Common.Utils;
 using System;
 using System.Collections.Generic;
@@ -20,12 +21,20 @@ namespace Com.GitHub.Knose1.Common.UI
 {
 	[RequireComponent(typeof(RectTransform))]
 	[ExecuteAlways]
-	public class BetterGrid : MonoBetterEditor
+	public class BetterGrid : MonoBehaviour
 	{
 		protected const string BETTER_GRID_DEBUG_TAG = "["+nameof(BetterGrid)+"]";
 
 		private const char PATERN_SEPARATOR = '-'; //When modifying this constant, don't forget to update the regex patern
 		private const string CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK = "\\d-?";
+
+		public enum Align
+		{
+			Left,
+			Right,
+			Center,
+			Jusify
+		}
 
 		private int[] childByMainAxiss;
 		[SerializeField] string childByMainAxisPatern = "1";
@@ -33,10 +42,16 @@ namespace Com.GitHub.Knose1.Common.UI
 		[SerializeField] int minimumChildSecondAxis = 0;
 		[SerializeField] int maximumChildSecondAxis = 10;
 		[SerializeField] Vector2 padding = default;
+		[SerializeField] Align mainAxisAlign = default;
 		[SerializeField] Corner startCorner = default;
 		[SerializeField] Axis startAxis = default;
 		[SerializeField] Vector2 gridCenter = new Vector2(0.5f, 0.5f);
-		[SerializeField] Vector2 elementsPivot = new Vector2(0.5f, 0.5f);
+
+		[Header("Margin")]
+		[SerializeField, RectName()] Rect margin = default;
+		[SerializeField] Rect margin2 = default;
+		[SerializeField, RectName()] RectInt marginInt = default;
+		[SerializeField] Rect marginInt2 = default;
 
 
 #if KNOSE_BETTER_GRID_TWINNING
@@ -130,8 +145,6 @@ namespace Com.GitHub.Knose1.Common.UI
 
 				child.anchorMin = min;
 				child.anchorMax = max;
-
-				child.pivot = elementsPivot;
 			}
 		}
 
@@ -206,13 +219,18 @@ namespace Com.GitHub.Knose1.Common.UI
 			colCount = Mathf.Max(minimumChildSecondAxis, colCount); //Base the layout on the minimum child 2nd axis
 			unclampedColCount = Mathf.Max(minimumChildSecondAxis, unclampedColCount); //Base the layout on the minimum child 2nd axis
 
+			//Get the grid size
 			Vector2Int gridSize = new Vector2Int(childByMainAxis, colCount);
+			//Set the original grid size
 			Vector2Int originalGridSize = gridSize;
+			//Exchange the size if vertical
 			if (startAxis == Axis.Vertical)
 				gridSize = new Vector2Int(gridSize.y, gridSize.x);
 
+			//Get the Cell size
 			GetCellSize(gridSize, out Vector2 size, out Vector2 sizeWithPadding, out Vector2 padding);
 
+			//Get the startPosition of the layout and the direction lerping
 			Vector2 startPosition = default;
 			Vector2 lDirection = default;
 
