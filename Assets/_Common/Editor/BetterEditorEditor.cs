@@ -73,7 +73,6 @@ namespace Com.GitHub.Knose1.Common.Editor
 
 		public void BetterGui()
 		{
-			Debug.Log("---------");
 			float deltaTime = Time.realtimeSinceStartup - lastTime;
 			if (!(target is InspectedType))
 			{
@@ -209,7 +208,6 @@ namespace Com.GitHub.Knose1.Common.Editor
 								opened = this.opened[parentIndexDepth];
 							}
 
-							Debug.Log("end: "+depth+" "+thisType);
 							if (thisType.Contains(FolderAttribute.FolderType.Fade))
 								EditorGUILayout.EndFadeGroup();
 
@@ -308,7 +306,6 @@ namespace Com.GitHub.Knose1.Common.Editor
 									fadeRatio[index] = Mathf.Clamp(fadeRatio[index] + (thisFadeFlipFlop ? -1 : 1) * deltaTime / foldTime, MIN_FOLD, MAX_FOLD);
 								}
 
-								Debug.Log("start: "+depth +" "+thisType);
 								openedFolderTypes[index] = added;
 								return openedInput;
 							}

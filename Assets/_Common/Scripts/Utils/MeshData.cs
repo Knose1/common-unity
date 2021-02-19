@@ -465,14 +465,12 @@ namespace Com.GitHub.Knose1.Common.Utils
 			}
 
 		}
-
 		public void Rotate(Quaternion value, Vector3 rotationOrigine, int from = 0, int to = -1)
 		{
 			Translate(-rotationOrigine, from, to);
 			Rotate(value, from, to);
 			Translate(rotationOrigine, from, to);
 		}
-
 		public void Rotate(Quaternion value, IEnumerable<int> indexes)
 		{
 			IEnumerator<int> enumerator = indexes.GetEnumerator();
@@ -489,6 +487,23 @@ namespace Com.GitHub.Knose1.Common.Utils
 			Translate(-rotationOrigine, indexes);
 			Rotate(value, indexes);
 			Translate(rotationOrigine, indexes);
+		}
+
+		public void VectorSymetry(Vector3 directorVector, int from = 0, int to = -1)
+		{
+			Rotate(Quaternion.AngleAxis(180, directorVector), from, to);
+		}
+		public void VectorSymetry(Vector3 directorVector, Vector3 symetryOrigine, int from = 0, int to = -1)
+		{
+			Rotate(Quaternion.AngleAxis(180, directorVector), symetryOrigine, from, to);
+		}
+		public void VectorSymetry(Vector3 directorVector, IEnumerable<int> indexes)
+		{
+			Rotate(Quaternion.AngleAxis(180, directorVector), indexes);
+		}
+		public void VectorSymetry(Vector3 directorVector, Vector3 symetryOrigine, IEnumerable<int> indexes)
+		{
+			Rotate(Quaternion.AngleAxis(180, directorVector), symetryOrigine, indexes);
 		}
 
 		/* Normals */
