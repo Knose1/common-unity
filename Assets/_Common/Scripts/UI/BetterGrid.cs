@@ -8,7 +8,10 @@
 using DG.Tweening;
 using DG.Tweening.Core;
 #endif
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using static UnityEngine.UI.GridLayoutGroup;
 
@@ -16,14 +19,17 @@ namespace Com.GitHub.Knose1.Common.UI
 {
 	[RequireComponent(typeof(RectTransform))]
 	[ExecuteAlways]
-	public class BetterGrid : MonoBehaviour
+	public class BetterGrid : MonoBetterEditor
 	{
 		protected const string BETTER_GRID_DEBUG_TAG = "["+nameof(BetterGrid)+"]";
 
+		private const string CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK = "\\d-?";
+
+		[SerializeField] string childByMainAxisPatern = "1";
 		[SerializeField] int childByMainAxis = 10;
 		[SerializeField] int minimumChildSecondAxis = 0;
 		[SerializeField] int maximumChildSecondAxis = 10;
-		[SerializeField, Range(0,1)] float padding = 0;
+		[SerializeField] Vector2 padding = default;
 		[SerializeField] Corner startCorner = default;
 		[SerializeField] Axis startAxis = default;
 		[SerializeField] Vector2 gridCenter = new Vector2(0.5f, 0.5f);
@@ -59,6 +65,13 @@ namespace Com.GitHub.Knose1.Common.UI
 			}
 #endif
 			minimumChildSecondAxis = Mathf.Clamp(minimumChildSecondAxis, 0, maximumChildSecondAxis);
+
+
+			childByMainAxisPatern = Regex.Matches(childByMainAxisPatern, CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK).Cast<Match>()
+				  .Aggregate("", (s, e) => s + e.Value, s => s);
+
+
+			if (childByMainAxisPatern == string.Empty) childByMainAxisPatern = "2";
 		}
 #endif
 
@@ -100,7 +113,7 @@ namespace Com.GitHub.Knose1.Common.UI
 				GetPosFromIndex(i, out int posX, out int posY);
 				PosToWorld(posX, posY, out Vector2 min, out Vector2 max);
 
-				bool canBeActive = posY < (colCount + 1);
+				//bool canBeActive = posY < (colCount + 1);
 
 				child.sizeDelta = new Vector2(0, 0);
 				child.anchoredPosition = new Vector2(0, 0);
@@ -155,7 +168,13 @@ namespace Com.GitHub.Knose1.Common.UI
 			return transform.GetChild(index).gameObject;
 		}
 
-		private void GetPosFromIndex(int index, out int posX, out int posY)
+		/// <summary>
+		/// Get the position of a child by its index
+		/// </summary>
+		/// <param name="index">Child index</param>
+		/// <param name="posX">X position in the grid</param>
+		/// <param name="posY">Y position in the grid</param>
+		public void GetPosFromIndex(int index, out int posX, out int posY)
 		{
 			posX = index % childByMainAxis;
 			posY = (index - posX) / childByMainAxis;
@@ -168,6 +187,119 @@ namespace Com.GitHub.Knose1.Common.UI
 		/// <param name="posX"></param>
 		/// <param name="posY"></param>
 		public void PosToWorld(int posX, int posY, out Vector2 min, out Vector2 max)
+		{
+			GetUnclampedSecondAxis(out int _, out int unclampedColCount);
+			GetSecondAxis(out _, out int colCount);
+
+			colCount = Mathf.Max(minimumChildSecondAxis, colCount); //Base the layout on the minimum child 2nd axis
+			unclampedColCount = Mathf.Max(minimumChildSecondAxis, unclampedColCount); //Base the layout on the minimum child 2nd axis
+
+			Vector2Int gridSize = new Vector2Int(childByMainAxis, colCount);
+			Vector2Int originalGridSize = gridSize;
+			if (startAxis == Axis.Vertical)
+				gridSize = new Vector2Int(gridSize.y, gridSize.x);
+
+			GetCellSize(gridSize, out Vector2 size, out Vector2 sizeWithPadding, out Vector2 padding);
+
+			Vector2 startPosition = default;
+			Vector2 lDirection = default;
+
+			switch (startCorner)
+			{
+				case Corner.LowerLeft:
+					startPosition.x = 0;
+					startPosition.y = 0;
+
+					lDirection.x = 1;
+					lDirection.y = 1;
+					break;
+				case Corner.LowerRight:
+					startPosition.x = 1;
+					startPosition.y = 0;
+
+					lDirection.x = -1;
+					lDirection.y = 1;
+
+					break;
+				case Corner.UpperLeft:
+					startPosition.x = 0;
+					startPosition.y = 1;
+
+					lDirection.x = 1;
+					lDirection.y = -1;
+					break;
+				case Corner.UpperRight:
+					startPosition.x = 1;
+					startPosition.y = 1;
+
+					lDirection.x = -1;
+					lDirection.y = -1;
+					break;
+			}
+
+			if (startAxis == Axis.Vertical)
+			{
+				int tempPosX = posX;
+
+				posX = posY;
+				posY = tempPosX;
+			}
+
+			Vector2 totalPadding = Vector2.one - (originalGridSize * size);
+
+			if (posX != 0) sizeWithPadding.x = size.x + totalPadding.x / (originalGridSize.x - 1);
+			if (posY != 0) sizeWithPadding.y = size.y + totalPadding.y / (originalGridSize.y - 1);
+
+			float xMin = lDirection.x * sizeWithPadding.x * posX + startPosition.x;
+			float xMax = xMin + lDirection.x * size.x;
+
+			float yMin = lDirection.y * sizeWithPadding.y * posY + startPosition.y;
+			float yMax = yMin + lDirection.y * size.y;
+
+			{
+				var tempXMin = xMin;
+				xMin = Mathf.Min(tempXMin, xMax);
+				xMax = Mathf.Max(tempXMin, xMax);
+
+				var tempYMin = yMin;
+				yMin = Mathf.Min(tempYMin, yMax);
+				yMax = Mathf.Max(tempYMin, yMax);
+			}
+
+			Vector2 defaultCenter = new Vector2(0.5f, 0.5f);
+			min = new Vector2(xMin, yMin) + gridCenter - defaultCenter;
+			max = new Vector2(xMax, yMax) + gridCenter - defaultCenter;
+
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gridSize">the size of the grid</param>
+		/// <param name="size">the size of the cell</param>
+		/// <param name="sizeWithPadding">size + padding</param>
+		private void GetCellSize(Vector2Int gridSize, out Vector2 size, out Vector2 sizeWithPadding, out Vector2 padding)
+		{
+
+			size = new Vector2();
+			size.x = 1f / gridSize.x;
+			size.y = 1f / gridSize.y;
+
+			padding = this.padding * size;
+
+			sizeWithPadding = new Vector2(size.x, size.y);
+			size -= padding;
+
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="posX"></param>
+		/// <param name="posY"></param>
+		[System.Obsolete]
+		public void OldPosToWorld(int posX, int posY, out Vector2 min, out Vector2 max)
 		{
 			GetUnclampedSecondAxis(out int _, out int unclampedColCount);
 			GetSecondAxis(out int __, out int colCount);
@@ -191,6 +323,7 @@ namespace Com.GitHub.Knose1.Common.UI
 					break;
 			}
 
+			float padding = this.padding.x;
 			float cellSize = 1 - padding;
 
 			float xMin = cellSize / childByMainAxis * (posX);
@@ -204,7 +337,6 @@ namespace Com.GitHub.Knose1.Common.UI
 			yMin += padding / colCount;
 			yMax -= padding / colCount;
 
-
 			xMin += padding * gridCenter.x;
 			xMax += padding * gridCenter.x;
 			yMin += padding * gridCenter.y;
@@ -212,7 +344,6 @@ namespace Com.GitHub.Knose1.Common.UI
 
 			min = new Vector2(xMin, yMin);
 			max = new Vector2(xMax, yMax);
-
 
 			if (startAxis == Axis.Vertical)
 			{
