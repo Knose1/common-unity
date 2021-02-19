@@ -8,6 +8,7 @@
 using DG.Tweening;
 using DG.Tweening.Core;
 #endif
+using Com.GitHub.Knose1.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,8 +24,10 @@ namespace Com.GitHub.Knose1.Common.UI
 	{
 		protected const string BETTER_GRID_DEBUG_TAG = "["+nameof(BetterGrid)+"]";
 
+		private const char PATERN_SEPARATOR = '-'; //When modifying this constant, don't forget to update the regex patern
 		private const string CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK = "\\d-?";
 
+		private int[] childByMainAxiss;
 		[SerializeField] string childByMainAxisPatern = "1";
 		[SerializeField] int childByMainAxis = 10;
 		[SerializeField] int minimumChildSecondAxis = 0;
@@ -65,7 +68,7 @@ namespace Com.GitHub.Knose1.Common.UI
 			}
 #endif
 			minimumChildSecondAxis = Mathf.Clamp(minimumChildSecondAxis, 0, maximumChildSecondAxis);
-
+			maximumChildSecondAxis = Mathf.Max(maximumChildSecondAxis, 1);
 
 			childByMainAxisPatern = Regex.Matches(childByMainAxisPatern, CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK).Cast<Match>()
 				  .Aggregate("", (s, e) => s + e.Value, s => s);
@@ -77,6 +80,8 @@ namespace Com.GitHub.Knose1.Common.UI
 
 		protected void Start()
 		{
+			ComputeChildByMainAxiss();
+
 			if (!Application.isPlaying) return;
 
 			GetSecondAxis(out int length, out int colCount);
@@ -102,6 +107,11 @@ namespace Com.GitHub.Knose1.Common.UI
 
 		private void Update()
 		{
+			if (!Application.isPlaying)
+			{
+				ComputeChildByMainAxiss();
+			}
+
 			if (!rectTransform) rectTransform = transform as RectTransform;
 
 			GetSecondAxis(out int length, out int colCount);
@@ -124,6 +134,8 @@ namespace Com.GitHub.Knose1.Common.UI
 				child.pivot = elementsPivot;
 			}
 		}
+
+		private void ComputeChildByMainAxiss() => childByMainAxiss = childByMainAxisPatern.Split(PATERN_SEPARATOR).Map((string item) => int.Parse(item)).ToArray();
 
 		/// <summary>
 		/// Get the total number of Y axis
@@ -286,6 +298,7 @@ namespace Com.GitHub.Knose1.Common.UI
 			size.y = 1f / gridSize.y;
 
 			padding = this.padding * size;
+			if (gridSize.y == 1) padding.y = 0;
 
 			sizeWithPadding = new Vector2(size.x, size.y);
 			size -= padding;
