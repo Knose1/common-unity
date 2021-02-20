@@ -22,7 +22,7 @@ namespace Com.GitHub.Knose1.Common.UI
 		protected const string BETTER_GRID_DEBUG_TAG = "["+nameof(BetterGrid)+"]";
 
 		private const char PATERN_SEPARATOR = '-'; //When modifying this constant, don't forget to update the regex patern
-		private const string CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK = "\\d-?";
+		private const string CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK = "([2-9]|\\d\\d+)-?";
 
 		[System.Serializable]
 		internal struct Align
@@ -215,10 +215,10 @@ namespace Com.GitHub.Knose1.Common.UI
 			childByMainAxiss = patern
 				.Split(PATERN_SEPARATOR)					//Split the string
 				.Map((string item) => int.Parse(item))		//from string[] to int[]
-				.Where((int i) => i != 0)					//Remove the 0
+				.Where((int i) => i > 1)					//Remove the 0 and the 1
 				.ToArray();                                 //ToArray
 
-			if (childByMainAxiss.Length == 0) childByMainAxiss = new int[] { 1 };
+			if (childByMainAxiss.Length < 0) childByMainAxiss = new int[] { 1 };
 
 			minChildByMainAxis = childByMainAxiss.Min();
 			maxChildByMainAxis = childByMainAxiss.Max();
@@ -451,7 +451,7 @@ namespace Com.GitHub.Knose1.Common.UI
 			{
 				int missingChildrenOnLine;
 				if (posX + 1 == unclampedColCount)
-					missingChildrenOnLine = missingChildrenOnLastLine;
+					missingChildrenOnLine = missingChildrenOnLastLine + 1;
 				else
 					missingChildrenOnLine = maxChildByMainAxis - GetChildsOnRow(posX);
 
@@ -480,7 +480,7 @@ namespace Com.GitHub.Knose1.Common.UI
 			{
 				int missingChildrenOnLine;
 				if (posY + 1 == unclampedColCount)
-					missingChildrenOnLine = missingChildrenOnLastLine;
+					missingChildrenOnLine = missingChildrenOnLastLine + 1;
 				else
 					missingChildrenOnLine = maxChildByMainAxis - GetChildsOnRow(posY);
 
