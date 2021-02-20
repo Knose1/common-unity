@@ -28,6 +28,30 @@ namespace Com.GitHub.Knose1.Common.Utils
 		}
 
 		/*----------------------------------*/
+		/*                Sum               */
+		/*----------------------------------*/
+		public static int SumFromTo(this IEnumerable<int> t, int from = 0, int to = -1)
+		{
+			if (to < 0)
+			{
+				to = t.Count() - 1;
+			}
+
+			int toReturn = 0;
+			IEnumerator<int> enumerator = t.GetEnumerator();
+
+			for (int i = from; i <= to; i++)
+			{
+				enumerator.MoveNext();
+				toReturn += enumerator.Current;
+			}
+
+			enumerator.Dispose();
+
+			return toReturn;
+		}
+
+		/*----------------------------------*/
 		/*           Map delegate           */
 		/*----------------------------------*/
 		public static IEnumerable<T2> Map<T, T2>(this IEnumerable<T> t, MapDelegate<T, T2> mapper)

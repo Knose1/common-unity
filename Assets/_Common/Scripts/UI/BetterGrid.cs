@@ -2,12 +2,8 @@
 /// Author : Knose1
 /// Date : 06/06/2020 12:19
 ///-----------------------------------------------------------------
-//#define KNOSE_BETTER_GRID_TWINNING
+//#define DEBUGME
 
-#if KNOSE_BETTER_GRID_TWINNING
-using DG.Tweening;
-using DG.Tweening.Core;
-#endif
 using Com.GitHub.Knose1.Common.Attributes.PropertyAttributes;
 using Com.GitHub.Knose1.Common.Utils;
 using System;
@@ -28,55 +24,99 @@ namespace Com.GitHub.Knose1.Common.UI
 		private const char PATERN_SEPARATOR = '-'; //When modifying this constant, don't forget to update the regex patern
 		private const string CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK = "\\d-?";
 
-		public enum Align
+		[System.Serializable]
+		internal struct Align
 		{
-			Left,
-			Right,
-			Center,
-			Jusify
+			public enum AlignVertical
+			{
+				Default = 0,
+				Top = 1,
+				Bottom = 2,
+				Center = 3
+			}
+			public enum AlignHorizontal
+			{
+				Default = 0,
+				Left = 1,
+				Right = 2,
+				Center = 3
+			}
+
+			[SerializeField] public int align;
+			public Align(int align) => this.align = align;
+
+			public static implicit operator int(Align a) => a.align;
 		}
 
-		private int[] childByMainAxiss;
-		[SerializeField] string childByMainAxisPatern = "1";
-		[SerializeField] int childByMainAxis = 10;
-		[SerializeField] int minimumChildSecondAxis = 0;
-		[SerializeField] int maximumChildSecondAxis = 10;
-		[SerializeField] Vector2 padding = default;
-		[SerializeField] Align mainAxisAlign = default;
-		[SerializeField] Corner startCorner = default;
-		[SerializeField] Axis startAxis = default;
-		[SerializeField] Vector2 gridCenter = new Vector2(0.5f, 0.5f);
+		/// <summary>
+		/// COMPUTED The number of child for each line/column (depend on the axis)
+		/// </summary>
+		protected int[] childByMainAxiss;
 
-		[SerializeField, RectName(x = "left", y = "bottom", w = "right", h = "top", displayOrder = new int[]{0,2,1,3})] Rect margin = default;
+		/// <summary>
+		/// childByMainAxiss.Min()
+		/// </summary>
+		protected int minChildByMainAxis = 10;
 
-#if KNOSE_BETTER_GRID_TWINNING
-		[Header("Twinning")]
-		[SerializeField] float moveTime = 0;
-		[SerializeField] AnimationCurve moveCurve = AnimationCurve.Linear(0,0,1,1);
-#if UNITY_EDITOR
-		[SerializeField] bool testTwin = false;
-#endif
+		/// <summary>
+		/// childByMainAxiss.Max()
+		/// </summary>
+		protected int maxChildByMainAxis = 10;
+
+		/// <summary>
+		/// The number of children missing on the last line to make a full line
+		/// </summary>
+		protected int missingChildrenOnLastLine = 0;
+		
+		[Header("Child Number")]
+		[SerializeField, Tooltip("The number of child for each line/column (depend on the axis). The patern loops.")] string childByMainAxisPatern = "1";
+		[SerializeField, Tooltip("The minimum column/line to show (depends on the 2nd axis).")] int minimumChildSecondAxis = 0;
+		[SerializeField, Tooltip("The maximum column/line to show (depends on the 2nd axis).")] int maximumChildSecondAxis = 10;
+
+		[Header("Shape")]
+		[SerializeField, Tooltip("Child Alignment.")] Align mainAxisAlign = default;
+		[SerializeField, Tooltip("The corner in which the first child is placed.")] Corner startCorner = default;
+		[SerializeField, Tooltip("The start axis, the 2nd axis will be its opposite.")] Axis startAxis = default;
+
+		[Header("Positioning")]
+		[SerializeField, Tooltip("The spacing between childs in child size (0.25 means that the original size is divided by 4).")] Vector2 padding = default;
+		[SerializeField, Tooltip("The center of the grid based on the anchors.")] Vector2 gridCenter = new Vector2(0.5f, 0.5f);
+
+		[SerializeField,
+		 Tooltip("The spacing between childs in anchor ratio. 0.5 means that layout will take half the available space."), 
+		 RectName(x = "left", y = "bottom", w = "right", h = "top", displayOrder = new int[]{0,2,1,3})
+		]
+		Rect margin = default;
+
+		public List<int> ChildByMainAxiss => childByMainAxiss.ToList();
+		public int MinimumChildSecondAxis => minimumChildSecondAxis;
+		public int MaximumChildSecondAxis => maximumChildSecondAxis;
+		public int MainAxisAlign => mainAxisAlign;
+		public Corner StartCorner => startCorner;
+		public Axis StartAxis => startAxis;
+		public Vector2 Padding => padding;
+		public Vector2 GridCenter => gridCenter;
+		public float MarginLeft => margin.x;
+		public float MarginBottom => margin.y;
+		public float MarginRight => margin.width;
+		public float MarginTop => margin.height;
+
+#if UNITY_EDITOR && DEBUGME
+		[Header("Debug")]
+		[SerializeField] Vector2Int posToIndex = default;
+		[SerializeField] int posToIndexIndex = default;
+		[Space()]
+		[SerializeField] int indexToPos = default;
+		[SerializeField] Vector2Int indexToPosPos = default;
 #endif
 		protected RectTransform rectTransform;
 
-#if KNOSE_BETTER_GRID_TWINNING
-		private bool isMoving = false;
-#endif
-		private void Awake()
-		{
-			rectTransform = transform as RectTransform;
-		}
 
 #if UNITY_EDITOR
 		private void OnValidate()
 		{
-#if KNOSE_BETTER_GRID_TWINNING
-			if (testTwin && !isMoving)
-			{
-				testTwin = false;
-				MoveGridDown(null);
-			}
-#endif
+			//childByMainAxis = Mathf.Max(childByMainAxis, 1);
+
 			minimumChildSecondAxis = Mathf.Clamp(minimumChildSecondAxis, 0, maximumChildSecondAxis);
 			maximumChildSecondAxis = Mathf.Max(maximumChildSecondAxis, 2);
 
@@ -85,13 +125,27 @@ namespace Com.GitHub.Knose1.Common.UI
 
 
 			if (childByMainAxisPatern == string.Empty) childByMainAxisPatern = "2";
+			
+
 
 			margin.x		= Mathf.Clamp(margin.x		, 0, 0.5f);
 			margin.y		= Mathf.Clamp(margin.y		, 0, 0.5f);
 			margin.width	= Mathf.Clamp(margin.width	, 0, 0.5f);
 			margin.height	= Mathf.Clamp(margin.height	, 0, 0.5f);
+
+#if DEBUGME
+			posToIndexIndex = GetIndexAt(posToIndex.x, posToIndex.y);
+
+			GetPosFromIndex(indexToPos, out int posX, out int posY);
+			indexToPosPos = new Vector2Int(posX, posY);
+#endif
 		}
 #endif
+
+		private void Awake()
+		{
+			rectTransform = transform as RectTransform;
+		}
 
 		protected void Start()
 		{
@@ -122,12 +176,14 @@ namespace Com.GitHub.Knose1.Common.UI
 
 		private void Update()
 		{
+#if UNITY_EDITOR
 			if (!Application.isPlaying)
 			{
 				ComputeChildByMainAxiss();
+				if (!rectTransform) rectTransform = transform as RectTransform;
 			}
+#endif
 
-			if (!rectTransform) rectTransform = transform as RectTransform;
 
 			GetSecondAxis(out int length, out int colCount);
 
@@ -148,17 +204,42 @@ namespace Com.GitHub.Knose1.Common.UI
 			}
 		}
 
-		private void ComputeChildByMainAxiss() => childByMainAxiss = childByMainAxisPatern.Split(PATERN_SEPARATOR).Map((string item) => int.Parse(item)).ToArray();
+		/// <summary>
+		/// Compute the variable childByMainAxiss
+		/// </summary>
+		private void ComputeChildByMainAxiss()
+		{
+			string patern = childByMainAxisPatern;
+			if (patern[patern.Length - 1] == PATERN_SEPARATOR) patern = patern.Remove(patern.Length - 1);
+
+			childByMainAxiss = patern
+				.Split(PATERN_SEPARATOR)					//Split the string
+				.Map((string item) => int.Parse(item))		//from string[] to int[]
+				.Where((int i) => i != 0)					//Remove the 0
+				.ToArray();                                 //ToArray
+
+			if (childByMainAxiss.Length == 0) childByMainAxiss = new int[] { 1 };
+
+			minChildByMainAxis = childByMainAxiss.Min();
+			maxChildByMainAxis = childByMainAxiss.Max();
+		}
 
 		/// <summary>
 		/// Get the total number of Y axis
 		/// </summary>
 		/// <param name="length">The number of child</param>
-		/// <param name="elementCount">The number of column</param>
-		public void GetUnclampedSecondAxis(out int length, out int elementCount)
+		/// <param name="columnCount">The number of column</param>
+		public void GetUnclampedSecondAxis(out int length, out int columnCount)
 		{
 			length = transform.childCount;
-			elementCount = (length - length % childByMainAxis) / childByMainAxis + (length % childByMainAxis == 0 ? 0 : 1);
+			
+			GetPosFromIndex(length, out int posX, out columnCount);
+
+			//NumberOfMissingChild = childsOnTheRow - numberOfChildsOnTheRow
+			missingChildrenOnLastLine = GetChildsOnRow(columnCount) - (posX + 1); //+1 since posX starts at 0
+
+			//Since posY starts at 0;
+			columnCount += 1;
 		}
 
 		/// <summary>
@@ -180,18 +261,72 @@ namespace Com.GitHub.Knose1.Common.UI
 		/// <returns></returns>
 		public GameObject GetTileAt(int x, int y)
 		{
-			GetUnclampedSecondAxis(out int length, out int colCount);
-
-			if (x < 0 || y < 0 || x >= childByMainAxis || y >= colCount)
-			{
-				Debug.LogWarning(BETTER_GRID_DEBUG_TAG + " You are trying to get a child out of bounds");
-				return null;
-			}
-
-			int index = y * childByMainAxis + x;
+			int index = GetIndexAt(x, y);
+			if (index < 0) return null;
 
 			return transform.GetChild(index).gameObject;
 		}
+
+		/// <summary>
+		/// Get the index of a tile at a certain position of the grid
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		public int GetIndexAt(int x, int y)
+		{
+			GetUnclampedSecondAxis(out _, out int colCount);
+
+			int xMax = GetChildsOnRow(y);
+
+			if (x < 0 || y < 0 || x >= xMax || y >= colCount)
+			{
+				Debug.LogWarning(BETTER_GRID_DEBUG_TAG + " You are trying to get a child out of bounds");
+				return -1;
+			}
+
+			// if y = 4 and x = 0
+			//
+			// y | count	| indexes
+			//   |			|
+			// 0 | 5		| 00 01 02 03 04
+			// 1 | 4		| 05 06 07 08
+			// 2 | 6		| 09 10 11 12 13 14
+			// 3 | 5		| 15 16 17 18 19 
+			// 4 | 4		| 20 21 22 23
+			// 5 | 6		| 24 25 26 27 28 29
+			//
+			// index = 5 + 4 + 6 + 5 + x
+
+			int index;
+			if (y == 0)
+			{
+				index = x;
+			}
+			else
+			{
+				int childAxiss = childByMainAxiss.Length; //3 (5 and 4 and 6)
+
+				//If it's 1 or 2 (in our example) set to 0
+				int totalSum = 0;
+				if (y >= childAxiss) totalSum = childByMainAxiss.SumFromTo();
+
+				//y / childAxiss means "how many time do we see '5,4,6' before arriving to y
+				//
+				//In our example we see it 1 time
+				//
+				// 5 4 6
+				// 5
+				//
+				// 
+				int paternRepeatSum = totalSum * ((y - 1) / childAxiss);
+				index = childByMainAxiss.SumFromTo(to: (y - 1) % childAxiss) + paternRepeatSum + x;
+			}
+
+			return index;
+		}
+
+		public int GetChildsOnRow(int y) => childByMainAxiss[y % childByMainAxiss.Length];
 
 		/// <summary>
 		/// Get the position of a child by its index
@@ -201,8 +336,26 @@ namespace Com.GitHub.Knose1.Common.UI
 		/// <param name="posY">Y position in the grid</param>
 		public void GetPosFromIndex(int index, out int posX, out int posY)
 		{
-			posX = index % childByMainAxis;
-			posY = (index - posX) / childByMainAxis;
+			posY = 0;
+
+			int childByMainAxissLength = childByMainAxiss.Length;
+			int elementsNotInGrid = index;
+			int i = 0;
+			while (elementsNotInGrid > 0)
+			{
+				int childByMainAxis = childByMainAxiss[i];
+				if (elementsNotInGrid >= childByMainAxis)
+				{
+					posY += 1;
+					elementsNotInGrid -= childByMainAxis;
+				}
+				else break;
+
+				i += 1;
+				i %= childByMainAxissLength;
+			}
+
+			posX = elementsNotInGrid;
 		}
 
 		/// <summary>
@@ -213,26 +366,22 @@ namespace Com.GitHub.Knose1.Common.UI
 		/// <param name="posY"></param>
 		public void PosToWorld(int posX, int posY, out Vector2 min, out Vector2 max)
 		{
-			GetUnclampedSecondAxis(out int _, out int unclampedColCount);
+			GetUnclampedSecondAxis(out _, out int unclampedColCount);
 			GetSecondAxis(out _, out int colCount);
 
 			colCount = Mathf.Max(minimumChildSecondAxis, colCount); //Base the layout on the minimum child 2nd axis
-			unclampedColCount = Mathf.Max(minimumChildSecondAxis, unclampedColCount); //Base the layout on the minimum child 2nd axis
+			//unclampedColCount = Mathf.Max(minimumChildSecondAxis, unclampedColCount); //Base the layout on the minimum child 2nd axis
 
 			//Get the grid size
-			Vector2Int gridSize = new Vector2Int(childByMainAxis, colCount);
-			//Set the original grid size
-			Vector2Int originalGridSize = gridSize;
+			Vector2Int gridSize = new Vector2Int(maxChildByMainAxis, colCount);
+			
 			//Exchange the size if vertical
 			if (startAxis == Axis.Vertical)
 				gridSize = new Vector2Int(gridSize.y, gridSize.x);
 
-			//Get the Cell size
-			GetCellSize(gridSize, out Vector2 size, out Vector2 sizeWithPadding, out Vector2 padding);
-
 			//Get the startPosition of the layout and the direction lerping
 			Vector2 startPosition = default;
-			Vector2 lDirection = default;
+			Vector2 direction = default;
 
 			switch (startCorner)
 			{
@@ -240,51 +389,48 @@ namespace Com.GitHub.Knose1.Common.UI
 					startPosition.x = 0;
 					startPosition.y = 0;
 
-					lDirection.x = 1;
-					lDirection.y = 1;
+					direction.x = 1;
+					direction.y = 1;
 					break;
 				case Corner.LowerRight:
 					startPosition.x = 1;
 					startPosition.y = 0;
 
-					lDirection.x = -1;
-					lDirection.y = 1;
+					direction.x = -1;
+					direction.y = 1;
 
 					break;
 				case Corner.UpperLeft:
 					startPosition.x = 0;
 					startPosition.y = 1;
 
-					lDirection.x = 1;
-					lDirection.y = -1;
+					direction.x = 1;
+					direction.y = -1;
 					break;
 				case Corner.UpperRight:
 					startPosition.x = 1;
 					startPosition.y = 1;
 
-					lDirection.x = -1;
-					lDirection.y = -1;
+					direction.x = -1;
+					direction.y = -1;
 					break;
 			}
 
 			if (startAxis == Axis.Vertical)
 			{
 				int tempPosX = posX;
-
 				posX = posY;
 				posY = tempPosX;
 			}
 
-			Vector2 totalPadding = Vector2.one - (gridSize * size);
+			//Get the Cell size
+			GetCellSize(new Vector2Int(posX, posY), gridSize, out Vector2 size, out Vector2 sizeWithPadding, out Vector2 padding);
 
-			if (posX != 0) sizeWithPadding.x = size.x + totalPadding.x / (gridSize.x - 1);
-			if (posY != 0) sizeWithPadding.y = size.y + totalPadding.y / (gridSize.y - 1);
+			float xMin = direction.x * sizeWithPadding.x * posX + startPosition.x;
+			float xMax = xMin + direction.x * size.x;
 
-			float xMin = lDirection.x * sizeWithPadding.x * posX + startPosition.x;
-			float xMax = xMin + lDirection.x * size.x;
-
-			float yMin = lDirection.y * sizeWithPadding.y * posY + startPosition.y;
-			float yMax = yMin + lDirection.y * size.y;
+			float yMin = direction.y * sizeWithPadding.y * posY + startPosition.y;
+			float yMax = yMin + direction.y * size.y;
 
 			{
 				var tempXMin = xMin;
@@ -300,10 +446,75 @@ namespace Com.GitHub.Knose1.Common.UI
 			min = new Vector2(xMin, yMin) + gridCenter - defaultCenter;
 			max = new Vector2(xMax, yMax) + gridCenter - defaultCenter;
 
+
+			if (startAxis == Axis.Vertical)
+			{
+				int missingChildrenOnLine;
+				if (posX + 1 == unclampedColCount)
+					missingChildrenOnLine = missingChildrenOnLastLine;
+				else
+					missingChildrenOnLine = maxChildByMainAxis - GetChildsOnRow(posX);
+
+				float spacing = (padding.y + size.y) * missingChildrenOnLine;
+				switch (mainAxisAlign)
+				{
+					case (int)Align.AlignVertical.Default: break;
+						
+					case (int)Align.AlignVertical.Bottom:
+						if (startCorner == Corner.LowerLeft || startCorner == Corner.LowerRight) break;
+						min.y -= spacing;
+						max.y -= spacing;
+						break;
+					case (int)Align.AlignVertical.Top:
+						if (startCorner == Corner.UpperLeft || startCorner == Corner.UpperRight) break;
+						min.y += spacing;
+						max.y += spacing;
+						break;
+					case (int)Align.AlignVertical.Center:
+						min.y += spacing / 2 * direction.y;
+						max.y += spacing / 2 * direction.y;
+						break;
+				}
+			}
+			else
+			{
+				int missingChildrenOnLine;
+				if (posY + 1 == unclampedColCount)
+					missingChildrenOnLine = missingChildrenOnLastLine;
+				else
+					missingChildrenOnLine = maxChildByMainAxis - GetChildsOnRow(posY);
+
+				float spacing = (padding.x + size.x) * missingChildrenOnLine;
+				switch (mainAxisAlign)
+				{
+					case (int)Align.AlignHorizontal.Default: break;
+
+					case (int)Align.AlignHorizontal.Left:
+						if (startCorner == Corner.LowerLeft || startCorner == Corner.UpperLeft) break;
+						min.x -= spacing;
+						max.x -= spacing;
+						break;
+					case (int)Align.AlignHorizontal.Right:
+						if (startCorner == Corner.LowerRight || startCorner == Corner.UpperRight) break;
+						min.x += spacing;
+						max.x += spacing;
+						break;
+					case (int)Align.AlignHorizontal.Center:
+						min.x += spacing / 2 * direction.x;
+						max.x += spacing / 2 * direction.x;
+						break;
+				}
+			}
+
 			ComputeMargin(ref min, ref max);
 		}
 
-		private void ComputeMargin(ref Vector2 min, ref Vector2 max)
+		/// <summary>
+		/// Compute the margin of the layout
+		/// </summary>
+		/// <param name="min"></param>
+		/// <param name="max"></param>
+		protected void ComputeMargin(ref Vector2 min, ref Vector2 max)
 		{
 			Rect gridRect = new Rect(0,0,1,1);
 			Vector2 size = max - min;
@@ -318,185 +529,43 @@ namespace Com.GitHub.Knose1.Common.UI
 		}
 
 		/// <summary>
-		/// 
+		/// Get the size of a cell
 		/// </summary>
 		/// <param name="gridSize">the size of the grid</param>
 		/// <param name="size">the size of the cell</param>
 		/// <param name="sizeWithPadding">size + padding</param>
-		private void GetCellSize(Vector2Int gridSize, out Vector2 size, out Vector2 sizeWithPadding, out Vector2 padding)
+		protected void GetCellSize(Vector2Int pos, Vector2Int gridSize, out Vector2 size, out Vector2 sizeWithPadding, out Vector2 padding)
 		{
+			size = new Vector2
+			{
+				x = 1f / gridSize.x,
+				y = 1f / gridSize.y
+			};
 
-			size = new Vector2();
-			size.x = 1f / gridSize.x;
-			size.y = 1f / gridSize.y;
-
+			//Make the padding relative to the element size (so 0.5 means that the size is 0)
 			padding = this.padding * size;
-			if (gridSize.y == 1) padding.y = 0;
+			if (gridSize.y == 1) padding.y = 0; //If there is only one y element, there is no padding
+			if (gridSize.x == 1) padding.x = 0; //If there is only one x element, there is no padding
 
 			sizeWithPadding = new Vector2(size.x, size.y);
 			size -= padding;
 
+			//Doesn't count the margin
+			Vector2 emptySpace = Vector2.one - (gridSize * size);
+
+			// The padding is a left padding. So don't count it when pos is 0
+			// 
+			// padding = emptySpace / (childrenCount - 1)
+			//
+			// (childrenCount - 1) is the spacing between each elements
+			//
+			padding.x = emptySpace.x / (gridSize.x - 1);
+			padding.y = emptySpace.y / (gridSize.y - 1);
+			if (pos.x != 0) sizeWithPadding.x = size.x + padding.x;
+			if (pos.y != 0) sizeWithPadding.y = size.y + padding.y;
 		}
 
-		/*
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="index"></param>
-		/// <param name="posX"></param>
-		/// <param name="posY"></param>
-		[System.Obsolete]
-		public void OldPosToWorld(int posX, int posY, out Vector2 min, out Vector2 max)
-		{
-			GetUnclampedSecondAxis(out int _, out int unclampedColCount);
-			GetSecondAxis(out int __, out int colCount);
 
-			colCount = Mathf.Max(minimumChildSecondAxis, colCount);
-			unclampedColCount = Mathf.Max(minimumChildSecondAxis, unclampedColCount);
-
-			switch (startCorner)
-			{
-				case Corner.LowerLeft:
-					break;
-				case Corner.LowerRight:
-					posX = childByMainAxis - posX - 1;
-					break;
-				case Corner.UpperRight:
-					posX = childByMainAxis - posX - 1;
-					posY = unclampedColCount - posY - 1;
-					break;
-				case Corner.UpperLeft:
-					posY = unclampedColCount - posY - 1;
-					break;
-			}
-
-			float padding = this.padding.x;
-			float cellSize = 1 - padding;
-
-			float xMin = cellSize / childByMainAxis * (posX);
-			float xMax = cellSize / childByMainAxis * (posX + 1);
-
-			float yMin = cellSize / colCount * (posY);
-			float yMax = cellSize / colCount * (posY + 1);
-
-			xMin += padding / colCount;
-			xMax -= padding / colCount;
-			yMin += padding / colCount;
-			yMax -= padding / colCount;
-
-			xMin += padding * gridCenter.x;
-			xMax += padding * gridCenter.x;
-			yMin += padding * gridCenter.y;
-			yMax += padding * gridCenter.y;
-
-			min = new Vector2(xMin, yMin);
-			max = new Vector2(xMax, yMax);
-
-			if (startAxis == Axis.Vertical)
-			{
-				Vector2 _min = new Vector2(1 - max.y, 1 - max.x);
-				Vector2 _max = new Vector2(1 - min.y, 1 - min.x);
-
-				min = _min;
-				max = _max;
-			}
-		}
-		*/
-
-#if KNOSE_BETTER_GRID_TWINNING
-		/*
-		 * An old twin I made for a gamejam, uncomment to use
-		 * Only works with LowerRight Corner, without padding and with one extra line
-		 */
-
-		/*////////////////////////////////////////////////////////////////////////////////////*/
-		/*                                                                                    */
-		/*                                      TWINNING                                      */
-		/*                                                                                    */
-		/*////////////////////////////////////////////////////////////////////////////////////*/
-		
-			/// <param name="nextVisibleLine">The line that will be visible at the next call of MoveGridDown</param>
-			public delegate void MoveComplete(List<GameObject> nextVisibleLine);
-
-			/// <summary>
-			/// Move all the gameobjects down
-			/// The bottomLine is moved to the top and disabled
-			/// </summary>
-			public void MoveGridDown(MoveComplete onComplete)
-			{
-				if (!Application.isPlaying)
-				{
-					Debug.LogWarning(BETTER_GRID_DEBUG_TAG+" Can't Move the Grid in editor");
-					return;
-				}
-
-				if (isMoving)
-				{
-					Debug.LogWarning(BETTER_GRID_DEBUG_TAG+" Wait for the Grid to finish moving before calling " +nameof(MoveGridDown));
-					return;
-				}
-
-				isMoving = true;
-
-				GetUnclampedSecondAxis(out int length, out int colCount);
-				List<GameObject> nextVisibleLine = new List<GameObject>();
-
-				//maxVisibleCol + 1 will be visible so maxVisibleCol + 2 the nextVisibleLine
-				int startIndex = Mathf.Min(colCount, maximumChildSecondAxis + 2);
-
-				//If there is no maxVisibleCol + 2, then the raw 0 will be the nextVisibleLine
-				if (startIndex == maximumChildSecondAxis + 1) startIndex = 0;
-
-				for (int i = 0; i < childByMainAxis; i++)
-				{
-					nextVisibleLine.Add(transform.GetChild(i + startIndex).gameObject);
-				}
-
-				int colCountClamped = Mathf.Min(colCount, maximumChildSecondAxis);
-
-				Vector2 endPos = new Vector2(0, -rectTransform.rect.height / colCountClamped);
-
-				TweenerCore<Vector2, Vector2, DG.Tweening.Plugins.Options.VectorOptions> twin = rectTransform.DOAnchorPos(endPos, moveTime);
-
-				twin.onComplete = twinComplete;
-				twin.SetEase(moveCurve);
-
-				void twinComplete()
-				{
-					isMoving = false;
-
-					rectTransform.anchoredPosition = Vector2.zero;
-
-					for (int i = 0; i < childByMainAxis; i++)
-					{
-						Transform child = transform.GetChild(0);
-
-						child.SetAsLastSibling();
-						DispatchRemovedEvent(child.GetComponentsInChildren<IBetterGridElement>(), i, colCount);
-						child.gameObject.SetActive(false);
-					}
-
-					for (int i = 0; i < childByMainAxis; i++)
-					{
-						GameObject child = nextVisibleLine[i];
-
-						child.gameObject.SetActive(true);
-						DispatchAddedEvent(child.GetComponentsInChildren<IBetterGridElement>(), i, maximumChildSecondAxis);
-					}
-
-					for (int i = 0; i < transform.childCount; i++)
-					{
-						GameObject child = transform.GetChild(i).gameObject;
-
-						GetPosFromIndex(i, out int x, out int y);
-						DispatchMovedEvent(child.GetComponentsInChildren<IBetterGridElement>(), x, y);
-					}
-
-
-					onComplete?.Invoke(nextVisibleLine);
-				}
-			}
-#endif
 
 		/*////////////////////////////////////////////////////////////////////////////////////*/
 		/*                                                                                    */
@@ -531,4 +600,46 @@ namespace Com.GitHub.Knose1.Common.UI
 		}
 
 	}
+
+#if UNITY_EDITOR
+	// Align drawer
+	[UnityEditor.CustomPropertyDrawer(typeof(BetterGrid.Align))]
+	internal class AlignDrawer : UnityEditor.PropertyDrawer
+	{
+
+		// Draw the property inside the given rect
+		public override void OnGUI(Rect position, UnityEditor.SerializedProperty property, GUIContent label)
+		{
+			// Using BeginProperty / EndProperty on the parent property means that
+			// prefab override logic works on the entire property.
+			UnityEditor.EditorGUI.BeginProperty(position, label, property);
+
+			// Draw label
+			position = UnityEditor.EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+
+			// Don't make child fields be indented
+			var indent = UnityEditor.EditorGUI.indentLevel;
+			UnityEditor.EditorGUI.indentLevel = 0;
+
+			// Calculate rects
+			var prop = property.FindPropertyRelative("align");
+			BetterGrid bg = property.serializedObject.targetObject as BetterGrid;
+			bool isVertical = bg.StartAxis == Axis.Vertical;
+
+			if (isVertical)
+			{
+				prop.intValue = Convert.ToInt32(UnityEditor.EditorGUI.EnumPopup(position, GUIContent.none, (BetterGrid.Align.AlignVertical)prop.intValue));
+			}
+			else
+			{
+				prop.intValue = Convert.ToInt32(UnityEditor.EditorGUI.EnumPopup(position, GUIContent.none, (BetterGrid.Align.AlignHorizontal)prop.intValue));
+			}
+
+			// Set indent back to what it was
+			UnityEditor.EditorGUI.indentLevel = indent;
+
+			UnityEditor.EditorGUI.EndProperty();
+		}
+	}
+#endif
 }
