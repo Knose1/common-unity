@@ -47,12 +47,7 @@ namespace Com.GitHub.Knose1.Common.UI
 		[SerializeField] Axis startAxis = default;
 		[SerializeField] Vector2 gridCenter = new Vector2(0.5f, 0.5f);
 
-		[Header("Margin")]
-		[SerializeField, RectName()] Rect margin = default;
-		[SerializeField] Rect margin2 = default;
-		[SerializeField, RectName()] RectInt marginInt = default;
-		[SerializeField] Rect marginInt2 = default;
-
+		[SerializeField, RectName(x = "left", y = "down", w = "right", h = "up", displayOrder = new int[]{0,2,1,3})] Rect margin = default;
 
 #if KNOSE_BETTER_GRID_TWINNING
 		[Header("Twinning")]
@@ -300,6 +295,23 @@ namespace Com.GitHub.Knose1.Common.UI
 			min = new Vector2(xMin, yMin) + gridCenter - defaultCenter;
 			max = new Vector2(xMax, yMax) + gridCenter - defaultCenter;
 
+			
+
+			ComputeMargin(ref min, ref max);
+		}
+
+		private void ComputeMargin(ref Vector2 min, ref Vector2 max)
+		{
+			Rect gridRect = new Rect(0,0,1,1);
+			Vector2 size = max - min;
+
+			gridRect.min = margin.position;
+			gridRect.max = Vector2.one - margin.size;
+
+			min = min * gridRect.size + gridRect.position;
+			size *= gridRect.size;
+
+			max = min + size;
 		}
 
 		/// <summary>
