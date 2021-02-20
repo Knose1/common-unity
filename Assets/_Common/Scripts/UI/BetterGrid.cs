@@ -47,7 +47,7 @@ namespace Com.GitHub.Knose1.Common.UI
 		[SerializeField] Axis startAxis = default;
 		[SerializeField] Vector2 gridCenter = new Vector2(0.5f, 0.5f);
 
-		[SerializeField, RectName(x = "left", y = "down", w = "right", h = "up", displayOrder = new int[]{0,2,1,3})] Rect margin = default;
+		[SerializeField, RectName(x = "left", y = "bottom", w = "right", h = "top", displayOrder = new int[]{0,2,1,3})] Rect margin = default;
 
 #if KNOSE_BETTER_GRID_TWINNING
 		[Header("Twinning")]
@@ -78,13 +78,18 @@ namespace Com.GitHub.Knose1.Common.UI
 			}
 #endif
 			minimumChildSecondAxis = Mathf.Clamp(minimumChildSecondAxis, 0, maximumChildSecondAxis);
-			maximumChildSecondAxis = Mathf.Max(maximumChildSecondAxis, 1);
+			maximumChildSecondAxis = Mathf.Max(maximumChildSecondAxis, 2);
 
 			childByMainAxisPatern = Regex.Matches(childByMainAxisPatern, CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK).Cast<Match>()
 				  .Aggregate("", (s, e) => s + e.Value, s => s);
 
 
 			if (childByMainAxisPatern == string.Empty) childByMainAxisPatern = "2";
+
+			margin.x		= Mathf.Clamp(margin.x		, 0, 0.5f);
+			margin.y		= Mathf.Clamp(margin.y		, 0, 0.5f);
+			margin.width	= Mathf.Clamp(margin.width	, 0, 0.5f);
+			margin.height	= Mathf.Clamp(margin.height	, 0, 0.5f);
 		}
 #endif
 
@@ -270,10 +275,10 @@ namespace Com.GitHub.Knose1.Common.UI
 				posY = tempPosX;
 			}
 
-			Vector2 totalPadding = Vector2.one - (originalGridSize * size);
+			Vector2 totalPadding = Vector2.one - (gridSize * size);
 
-			if (posX != 0) sizeWithPadding.x = size.x + totalPadding.x / (originalGridSize.x - 1);
-			if (posY != 0) sizeWithPadding.y = size.y + totalPadding.y / (originalGridSize.y - 1);
+			if (posX != 0) sizeWithPadding.x = size.x + totalPadding.x / (gridSize.x - 1);
+			if (posY != 0) sizeWithPadding.y = size.y + totalPadding.y / (gridSize.y - 1);
 
 			float xMin = lDirection.x * sizeWithPadding.x * posX + startPosition.x;
 			float xMax = xMin + lDirection.x * size.x;
@@ -294,8 +299,6 @@ namespace Com.GitHub.Knose1.Common.UI
 			Vector2 defaultCenter = new Vector2(0.5f, 0.5f);
 			min = new Vector2(xMin, yMin) + gridCenter - defaultCenter;
 			max = new Vector2(xMax, yMax) + gridCenter - defaultCenter;
-
-			
 
 			ComputeMargin(ref min, ref max);
 		}
@@ -335,6 +338,7 @@ namespace Com.GitHub.Knose1.Common.UI
 
 		}
 
+		/*
 		/// <summary>
 		/// 
 		/// </summary>
@@ -397,6 +401,7 @@ namespace Com.GitHub.Knose1.Common.UI
 				max = _max;
 			}
 		}
+		*/
 
 #if KNOSE_BETTER_GRID_TWINNING
 		/*

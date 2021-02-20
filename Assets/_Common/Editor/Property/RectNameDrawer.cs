@@ -22,6 +22,7 @@ namespace Com.GitHub.Knose1.Common.Editor.Property
 			position.height -= PADDING + MARGIN_BOTTOM;
 
 			RectNameAttribute rectNameAttribute = attribute as RectNameAttribute;
+			rectNameAttribute.CheckDisplayOrder();
 
 			SerializedPropertyType propertyType = property.propertyType;
 
@@ -52,8 +53,10 @@ namespace Com.GitHub.Knose1.Common.Editor.Property
 			Vector2 sizeX = new Vector2(size.x, 0);
 			Vector2 moveXY = new Vector2(size.x + 10, size.y + PADDING);
 
-			void BuildSubproperty(Vector2Int fieldPosition, SerializedProperty prop, string rectName)
+			void BuildSubproperty(int index, SerializedProperty prop, string rectName)
 			{
+				Vector2Int fieldPosition = rectNameAttribute.GetPosition(index);
+
 				GUIContent content = new GUIContent(rectName);
 				float labelWidthF = EditorStyles.label.CalcSize(content).x;
 
@@ -64,10 +67,10 @@ namespace Com.GitHub.Knose1.Common.Editor.Property
 			}
 
 			EditorGUI.LabelField(new Rect(position.position, size), label);
-			BuildSubproperty(new Vector2Int(0,0), x, rectNameAttribute.x);
-			BuildSubproperty(new Vector2Int(1,0), y, rectNameAttribute.y);
-			BuildSubproperty(new Vector2Int(0,1), w, rectNameAttribute.w);
-			BuildSubproperty(new Vector2Int(1,1), h, rectNameAttribute.h);
+			BuildSubproperty(RectNameAttribute.X_INDEX, x, rectNameAttribute.x);
+			BuildSubproperty(RectNameAttribute.Y_INDEX, y, rectNameAttribute.y);
+			BuildSubproperty(RectNameAttribute.W_INDEX, w, rectNameAttribute.w);
+			BuildSubproperty(RectNameAttribute.H_INDEX, h, rectNameAttribute.h);
 
 
 			EditorGUI.EndProperty();
