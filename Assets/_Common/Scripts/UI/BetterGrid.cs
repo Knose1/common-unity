@@ -233,7 +233,7 @@ namespace Com.GitHub.Knose1.Common.UI
 		{
 			length = transform.childCount;
 			
-			GetPosFromIndex(length, out int posX, out columnCount);
+			GetPosFromIndex(length - 1, out int posX, out columnCount);
 
 			//NumberOfMissingChild = childsOnTheRow - numberOfChildsOnTheRow
 			missingChildrenOnLastLine = GetChildsOnRow(columnCount) - (posX + 1); //+1 since posX starts at 0
