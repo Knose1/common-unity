@@ -236,7 +236,7 @@ namespace Com.GitHub.Knose1.Common.UI
 			GetPosFromIndex(length - 1, out int posX, out columnCount);
 
 			//NumberOfMissingChild = childsOnTheRow - numberOfChildsOnTheRow
-			missingChildrenOnLastLine = GetChildsOnRow(columnCount) - (posX + 1); //+1 since posX starts at 0
+			missingChildrenOnLastLine = maxChildByMainAxis - (posX + 2); //+1 since posX starts at 0
 
 			//Since posY starts at 0;
 			columnCount += 1;
