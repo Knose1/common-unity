@@ -359,11 +359,12 @@ namespace Com.GitHub.Knose1.Common.UI
 		}
 
 		/// <summary>
-		/// 
+		/// Computer and get the tile min and max anchor at position
 		/// </summary>
-		/// <param name="index"></param>
 		/// <param name="posX"></param>
 		/// <param name="posY"></param>
+		/// <param name="min"></param>
+		/// <param name="max"></param>
 		public void PosToWorld(int posX, int posY, out Vector2 min, out Vector2 max)
 		{
 			GetUnclampedSecondAxis(out _, out int unclampedColCount);
