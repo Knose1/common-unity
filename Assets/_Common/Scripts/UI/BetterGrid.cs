@@ -22,7 +22,7 @@ namespace Com.GitHub.Knose1.Common.UI
 		protected const string BETTER_GRID_DEBUG_TAG = "["+nameof(BetterGrid)+"]";
 
 		private const char PATERN_SEPARATOR = '-'; //When modifying this constant, don't forget to update the regex patern
-		private const string CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK = "([2-9]|\\d\\d+)-?";
+		private const string CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK = "([1-9]|\\d\\d+)-?";
 
 		[System.Serializable]
 		internal struct Align
@@ -118,13 +118,13 @@ namespace Com.GitHub.Knose1.Common.UI
 			//childByMainAxis = Mathf.Max(childByMainAxis, 1);
 
 			minimumChildSecondAxis = Mathf.Clamp(minimumChildSecondAxis, 0, maximumChildSecondAxis);
-			maximumChildSecondAxis = Mathf.Max(maximumChildSecondAxis, 2);
+			maximumChildSecondAxis = Mathf.Max(maximumChildSecondAxis, 1);
 
 			childByMainAxisPatern = Regex.Matches(childByMainAxisPatern, CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK).Cast<Match>()
 				  .Aggregate("", (s, e) => s + e.Value, s => s);
 
 
-			if (childByMainAxisPatern == string.Empty) childByMainAxisPatern = "2";
+			if (childByMainAxisPatern == string.Empty) childByMainAxisPatern = "1";
 			
 
 
@@ -215,7 +215,7 @@ namespace Com.GitHub.Knose1.Common.UI
 			childByMainAxiss = patern
 				.Split(PATERN_SEPARATOR)					//Split the string
 				.Map((string item) => int.Parse(item))		//from string[] to int[]
-				.Where((int i) => i > 1)					//Remove the 0 and the 1
+				.Where((int i) => i > 0)					//Remove the 0 and the 1
 				.ToArray();                                 //ToArray
 
 			if (childByMainAxiss.Length < 0) childByMainAxiss = new int[] { 1 };
@@ -559,8 +559,8 @@ namespace Com.GitHub.Knose1.Common.UI
 			//
 			// (childrenCount - 1) is the spacing between each elements
 			//
-			padding.x = emptySpace.x / (gridSize.x - 1);
-			padding.y = emptySpace.y / (gridSize.y - 1);
+			if (gridSize.x > 1) padding.x = emptySpace.x / (gridSize.x - 1);
+			if (gridSize.y > 1) padding.y = emptySpace.y / (gridSize.y - 1);
 			if (pos.x != 0) sizeWithPadding.x = size.x + padding.x;
 			if (pos.y != 0) sizeWithPadding.y = size.y + padding.y;
 		}
