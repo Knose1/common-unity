@@ -5,7 +5,8 @@
 
 using UnityEngine;
 
-namespace Com.GitHub.Knose1.Common.UI {
+namespace Com.GitHub.Knose1.Common.UI.GridLayout
+{
 	public class BetterGridElementDestroyOnDrop : MonoBehaviour, IBetterGridElement
 	{
 		public virtual void AddedToGrid(int x, int y) { }
