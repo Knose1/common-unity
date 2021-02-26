@@ -37,7 +37,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 3280132761816611329}
-    m_Position: {x: 230, y: 120, z: 0}
+    m_Position: {x: 250, y: 100, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -7914996198445035802}
     m_Position: {x: 450, y: 180, z: 0}
@@ -63,7 +63,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: TriggerTest
+    m_ConditionEvent: Start
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 3280132761816611329}
@@ -88,7 +88,7 @@ AnimatorController:
   m_Name: TileContainer
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: TriggerTest
+  - m_Name: Start
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
