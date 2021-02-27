@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-namespace Com.Github.Knose1.Common.TestBetterEditor
+namespace Com.GitHub.Knose1.Common.TestBetterEditor
 {
 	[CustomGUI(nameof(CustomGui)), Serializable]
 	public class Hello

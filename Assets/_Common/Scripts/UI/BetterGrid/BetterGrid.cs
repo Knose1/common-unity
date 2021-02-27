@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using static UnityEngine.UI.GridLayoutGroup;
 
-namespace Com.GitHub.Knose1.Common.UI.GridLayout
+namespace Com.GitHub.Knose1.Common.UI
 {
 	[RequireComponent(typeof(RectTransform))]
 	[ExecuteAlways]

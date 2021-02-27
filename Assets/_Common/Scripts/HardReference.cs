@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Com.Github.Knose1.Common
+namespace Com.GitHub.Knose1.Common
 {
 	public class HardReference<T> where T : struct
 	{

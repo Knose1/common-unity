@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-namespace Com.Github.Knose1.Common.TestBetterEditor
+namespace Com.GitHub.Knose1.Common.TestBetterEditor
 {
 	[CreateAssetMenu(fileName=nameof(TestBetterEditorScriptable), menuName ="Test/BetterEditor/"+nameof(TestBetterEditorScriptable))]
 	public class TestBetterEditorScriptable : ScriptableBetterEditor

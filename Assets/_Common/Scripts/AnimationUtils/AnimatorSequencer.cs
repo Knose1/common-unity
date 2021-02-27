@@ -7,8 +7,9 @@ using Com.GitHub.Knose1.Common.Utils;
 using Com.GitHub.Knose1.Common.AnimationUtils;
 using UnityEngine;
 using System.Data;
+using Com.GitHub.Knose1.Common.UI;
 
-namespace Com.GitHub.Knose1.Common.UI.GridLayout
+namespace Com.GitHub.Knose1.Common.AnimationUtils
 {
 	public class AnimatorSequencer : MonoBehaviour
 	{
