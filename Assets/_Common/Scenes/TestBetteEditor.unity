@@ -45248,8 +45248,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   executeOnStart: 1
-  sequenceType: 0
   computeAnimatorsOnExecute: 1
+  sequenceType: 0
   animatorSequenceFunction: (-(x+y-(w+h)/2)*(x+y-(w+h)/2))/((w+h)*(w+h))*4+1
   animatorSequenceFunctionDebug: 0
   animatorSequenceFunctionParameter:
@@ -45258,87 +45258,7 @@ MonoBehaviour:
     floatValue: 0
     intValue: 0
     boolValue: 0
-  animatorSequenceList:
-  - childIndex: 0
-    startPlayTime: 0
-    parameter:
-      paramName: 
-      type: 0
-      floatValue: 0
-      intValue: 0
-      boolValue: 0
-  - childIndex: 0
-    startPlayTime: 0
-    parameter:
-      paramName: 
-      type: 0
-      floatValue: 0
-      intValue: 0
-      boolValue: 0
-  - childIndex: 0
-    startPlayTime: 0
-    parameter:
-      paramName: 
-      type: 0
-      floatValue: 0
-      intValue: 0
-      boolValue: 0
-  - childIndex: 0
-    startPlayTime: 0
-    parameter:
-      paramName: 
-      type: 0
-      floatValue: 0
-      intValue: 0
-      boolValue: 0
-  - childIndex: 0
-    startPlayTime: 0
-    parameter:
-      paramName: 
-      type: 0
-      floatValue: 0
-      intValue: 0
-      boolValue: 0
-  - childIndex: 0
-    startPlayTime: 0
-    parameter:
-      paramName: 
-      type: 0
-      floatValue: 0
-      intValue: 0
-      boolValue: 0
-  - childIndex: 0
-    startPlayTime: 0
-    parameter:
-      paramName: 
-      type: 0
-      floatValue: 0
-      intValue: 0
-      boolValue: 0
-  - childIndex: 0
-    startPlayTime: 0
-    parameter:
-      paramName: 
-      type: 0
-      floatValue: 0
-      intValue: 0
-      boolValue: 0
-  - childIndex: 0
-    startPlayTime: 0
-    parameter:
-      paramName: 
-      type: 0
-      floatValue: 0
-      intValue: 0
-      boolValue: 0
-  - childIndex: 0
-    startPlayTime: 0
-    parameter:
-      paramName: 
-      type: 0
-      floatValue: 0
-      intValue: 0
-      boolValue: 0
+  animatorSequenceList: []
 --- !u!114 &1718599968
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45352,8 +45272,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   executeOnStart: 1
-  sequenceType: 0
   computeAnimatorsOnExecute: 1
+  sequenceType: 0
   animatorSequenceFunction: 4-((-(x+y-(w+h)/2)*(x+y-(w+h)/2))/((w+h)*(w+h))*4+1)
   animatorSequenceFunctionDebug: 0
   animatorSequenceFunctionParameter:

@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Com.GitHub.Knose1.Common.Attributes.PropertyAttributes;
 using Com.GitHub.Knose1.Common.Utils;
-using Com.GitHub.Knose1.Common.AnimationUtils;
 using UnityEngine;
 using System.Data;
 using Com.GitHub.Knose1.Common.UI;
@@ -54,8 +52,8 @@ namespace Com.GitHub.Knose1.Common.AnimationUtils
 		private List<Animator> animators = new List<Animator>();
 		
 		[SerializeField] private bool executeOnStart = false;
-		[SerializeField] private SequenceType sequenceType = SequenceType.MathFunction;
 		[SerializeField] private bool computeAnimatorsOnExecute = true;
+		[SerializeField] private SequenceType sequenceType = SequenceType.MathFunction;
 		
 		[Header("Sequence Function")]
 		[SerializeField, Tooltip("Variables:\ni: index\nc child count\n\nBetterGrid:\nx: x grid position\ny: y grid position\nw: width\nh: height ")] private string animatorSequenceFunction = "";
