@@ -22,7 +22,7 @@ namespace Com.GitHub.Knose1.Common.UI.GridLayout
 		protected const string BETTER_GRID_DEBUG_TAG = "["+nameof(BetterGrid)+"]";
 
 		private const char PATERN_SEPARATOR = '-'; //When modifying this constant, don't forget to update the regex patern
-		private const string CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK = "([1-9]|\\d\\d+)-?";
+		private const string CHILD_BY_MAIN_AXIS_PATERN_REGEX_CHECK = "[1-9]\\d*-?";
 
 		[System.Serializable]
 		internal struct Align
@@ -145,11 +145,11 @@ namespace Com.GitHub.Knose1.Common.UI.GridLayout
 		private void Awake()
 		{
 			rectTransform = transform as RectTransform;
+			ComputeChildByMainAxiss();
 		}
 
 		protected void Start()
 		{
-			ComputeChildByMainAxiss();
 
 			if (!Application.isPlaying) return;
 

@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -54,7 +55,7 @@ namespace Com.GitHub.Knose1.Common.Utils
 		/*----------------------------------*/
 		/*           Map delegate           */
 		/*----------------------------------*/
-		public static IEnumerable<T2> Map<T, T2>(this IEnumerable<T> t, MapDelegate<T, T2> mapper)
+		public static IEnumerable<T2> Map<T, T2>(this IEnumerable<T> t, Func<T, T2> mapper)
 		{
 			List<T2> toReturn = new List<T2>();
 			IEnumerator<T> enumerator = t.GetEnumerator();
@@ -66,7 +67,7 @@ namespace Com.GitHub.Knose1.Common.Utils
 
 			return toReturn;
 		}
-		public static List<T2> Map<T, T2>(this List<T> t, MapDelegate<T, T2> mapper)
+		public static List<T2> Map<T, T2>(this List<T> t, Func<T, T2> mapper)
 		{
 			List<T2> toReturn = new List<T2>();
 			IEnumerator<T> enumerator = t.GetEnumerator();
@@ -82,7 +83,7 @@ namespace Com.GitHub.Knose1.Common.Utils
 		/*-----------------------------------*/
 		/*         Map delegate full         */
 		/*-----------------------------------*/
-		public static IEnumerable<T2> Map<T, T2>(this IEnumerable<T> t, MapDelegateFull<T,T2> mapper)
+		public static IEnumerable<T2> Map<T, T2>(this IEnumerable<T> t, Func<T,int,T2> mapper)
 		{
 			List<T2> toReturn = new List<T2>();
 			IEnumerator<T> enumerator = t.GetEnumerator();
@@ -97,7 +98,7 @@ namespace Com.GitHub.Knose1.Common.Utils
 			return toReturn;
 		}
 
-		public static List<T2> Map<T, T2>(this List<T> t, MapDelegateFull<T,T2> mapper)
+		public static List<T2> Map<T, T2>(this List<T> t, Func<T,int,T2> mapper)
 		{
 			List<T2> toReturn = new List<T2>();
 			IEnumerator<T> enumerator = t.GetEnumerator();
@@ -111,5 +112,56 @@ namespace Com.GitHub.Knose1.Common.Utils
 
 			return toReturn;
 		}
+
+		
+
+		/*-----------------------------------*/
+		/*               Join                */
+		/*-----------------------------------*/
+		public static string ToJoinString<T>(this IEnumerable<T> t, string joinString = ",")
+		{
+			string toReturn = "";
+			IEnumerator<T> enumerator = t.GetEnumerator();
+
+			while (enumerator.MoveNext())
+			{
+				toReturn += enumerator.Current.ToString() + joinString;
+			}
+			enumerator.Dispose();
+
+			return toReturn.Substring(toReturn.Length - joinString.Length, joinString.Length);
+		}
+
+		public static string ToJoinString<T>(this IEnumerable<T> t, Func<T, string> toStringFunc, string joinString = ",")
+		{
+			string toReturn = "";
+			IEnumerator<T> enumerator = t.GetEnumerator();
+
+			while (enumerator.MoveNext())
+			{
+				toReturn += toStringFunc(enumerator.Current) + joinString;
+			}
+			enumerator.Dispose();
+
+			return toReturn.Substring(toReturn.Length - joinString.Length, joinString.Length);
+		}
+
+		public static string ToJoinString<T>(this IEnumerable<T> t, Func<T, int, string> toStringFunc, string joinString = ",")
+		{
+			string toReturn = "";
+			IEnumerator<T> enumerator = t.GetEnumerator();
+
+			int index = -1;
+			while (enumerator.MoveNext())
+			{
+				index += 1;
+				toReturn += toStringFunc(enumerator.Current, index) + joinString;
+			}
+			enumerator.Dispose();
+
+			return toReturn.Substring(toReturn.Length - joinString.Length, joinString.Length);
+		}
+
+
 	}
 }

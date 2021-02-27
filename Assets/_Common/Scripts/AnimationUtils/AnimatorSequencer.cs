@@ -6,7 +6,6 @@ using Com.GitHub.Knose1.Common.Attributes.PropertyAttributes;
 using Com.GitHub.Knose1.Common.Utils;
 using Com.GitHub.Knose1.Common.AnimationUtils;
 using UnityEngine;
-
 using System.Data;
 
 namespace Com.GitHub.Knose1.Common.UI.GridLayout
@@ -28,12 +27,27 @@ namespace Com.GitHub.Knose1.Common.UI.GridLayout
 		}
 
 		private const string DEBUG_PREFIX = "[" + nameof(AnimatorSequencer) + "]";
+		
+		private const string WHITE_SPACE = " ";
+
 		private const string CHILD_INDEX_REPLACEABLE = "i";
+		private const string CHILD_INDEX_REPLACEABLE_SPACED = WHITE_SPACE + CHILD_INDEX_REPLACEABLE + WHITE_SPACE;
+		
+		private const string CHILD_COUNT_REPLACEABLE = "c";
+		private const string CHILD_COUNT_REPLACEABLE_SPACED = WHITE_SPACE + CHILD_COUNT_REPLACEABLE + WHITE_SPACE;
+
 		private const string X_REPLACEABLE = "x";
+		private const string X_REPLACEABLE_SPACED = WHITE_SPACE + X_REPLACEABLE + WHITE_SPACE;
+
 		private const string Y_REPLACEABLE = "y";
+		private const string Y_REPLACEABLE_SPACED = WHITE_SPACE + Y_REPLACEABLE + WHITE_SPACE;
+
 		private const string WIDTH_REPLACEABLE = "w";
-		private const string HEIGHT_REPLACEABLE = "h"; //todo
-		private const string CHILD_COUNT_REPLACEABLE = "c"; //todo
+		private const string WIDTH_REPLACEABLE_SPACED = WHITE_SPACE + WIDTH_REPLACEABLE + WHITE_SPACE;
+
+		private const string HEIGHT_REPLACEABLE = "h";
+		private const string HEIGHT_REPLACEABLE_SPACED = WHITE_SPACE + HEIGHT_REPLACEABLE + WHITE_SPACE;
+
 		private bool isPlaying = false;
 		private List<AnimatorData> notAnimatedYet = new List<AnimatorData>();
 		private List<Animator> animators = new List<Animator>();
@@ -43,7 +57,7 @@ namespace Com.GitHub.Knose1.Common.UI.GridLayout
 		[SerializeField] private bool computeAnimatorsOnExecute = true;
 		
 		[Header("Sequence Function")]
-		[SerializeField, Tooltip("Variables:\ni: index\nhc child count\n\nBetterGrid:\nx: x grid position\ny: y grid position\nw: width\nh: height ")] private string animatorSequenceFunction = "";
+		[SerializeField, Tooltip("Variables:\ni: index\nc child count\n\nBetterGrid:\nx: x grid position\ny: y grid position\nw: width\nh: height ")] private string animatorSequenceFunction = "";
 		[SerializeField] public bool animatorSequenceFunctionDebug;
 		[SerializeField] public AnimatorParameter animatorSequenceFunctionParameter;
 
@@ -90,16 +104,24 @@ namespace Com.GitHub.Knose1.Common.UI.GridLayout
 			animators = new List<Animator>();
 			animatorSequenceList = new List<AnimatorData>();
 
-			Regex wordRegex = new Regex("\\w");
+			Regex addSpaceAroundWords = new Regex("\\w+");
 
 			for (int i = 0; i < childCount; i++)
 			{
 				animators.Add(transform.GetChild(i).GetComponent<Animator>());
 
-				string mathOperation = wordRegex.Replace(animatorSequenceFunction, " $& ").Replace('.', ',').Replace(CHILD_INDEX_REPLACEABLE, i.ToString());
+				string mathOperation = addSpaceAroundWords.Replace(animatorSequenceFunction, " $& ").Replace('.', ',');
 				float fl = 0;
 				DataTable dt = new DataTable();
-				if (!betterGrid && (animatorSequenceFunction.Contains(X_REPLACEABLE) || animatorSequenceFunction.Contains(X_REPLACEABLE) || animatorSequenceFunction.Contains(WIDTH_REPLACEABLE)))
+				
+				if	(!betterGrid && 
+						(
+							animatorSequenceFunction.Contains(X_REPLACEABLE_SPACED) || 
+							animatorSequenceFunction.Contains(Y_REPLACEABLE_SPACED) || 
+							animatorSequenceFunction.Contains(WIDTH_REPLACEABLE_SPACED) || 
+							animatorSequenceFunction.Contains(HEIGHT_REPLACEABLE_SPACED)
+						)
+					)
 				{
 					Debug.LogWarning(DEBUG_PREFIX+" "+$"Trying to acces {X_REPLACEABLE}, {Y_REPLACEABLE} or {WIDTH_REPLACEABLE} in math expression without "+nameof(BetterGrid)+" component");
 				}
@@ -107,12 +129,22 @@ namespace Com.GitHub.Knose1.Common.UI.GridLayout
 				{
 					string debugString = "";
 					debugString += CHILD_INDEX_REPLACEABLE + ":" + i;
+					debugString += " " + CHILD_COUNT_REPLACEABLE + ":" + childCount;
+
+					mathOperation = mathOperation
+						.Replace(CHILD_INDEX_REPLACEABLE_SPACED, i.ToString())
+						.Replace(CHILD_COUNT_REPLACEABLE_SPACED, childCount.ToString());
+
 					if (betterGrid)
 					{
 						betterGrid.GetPosFromIndex(i, out int x, out int y);
 						int w = betterGrid.GetChildsOnRow(y);
-						int h = betterGrid.GetChildsOnRow(y);
-						mathOperation = mathOperation.Replace(X_REPLACEABLE, x.ToString()).Replace(Y_REPLACEABLE, y.ToString()).Replace(WIDTH_REPLACEABLE, w.ToString());
+						betterGrid.GetUnclampedSecondAxis(out _, out int h);
+						mathOperation = mathOperation
+							.Replace(X_REPLACEABLE_SPACED, x.ToString())
+							.Replace(Y_REPLACEABLE_SPACED, y.ToString())
+							.Replace(WIDTH_REPLACEABLE_SPACED, w.ToString())
+							.Replace(HEIGHT_REPLACEABLE_SPACED, h.ToString());
 
 						debugString += " " + X_REPLACEABLE + ":" + x;
 						debugString += " " + Y_REPLACEABLE + ":" + y;
@@ -123,8 +155,8 @@ namespace Com.GitHub.Knose1.Common.UI.GridLayout
 
 					if (animatorSequenceFunctionDebug) Debug.Log(DEBUG_PREFIX + " " + debugString);
 
-					object computed = dt.Compute(mathOperation, "");
-					fl = float.Parse(computed.ToString());
+					object obj = dt.Compute(mathOperation, "");
+					fl = float.Parse(obj.ToString());
 				}
 
 				
