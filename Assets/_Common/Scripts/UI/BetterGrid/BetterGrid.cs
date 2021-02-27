@@ -4,14 +4,15 @@
 ///-----------------------------------------------------------------
 //#define DEBUGME
 
-using Com.GitHub.Knose1.Common.Attributes.PropertyAttributes;
-using Com.GitHub.Knose1.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using static UnityEngine.UI.GridLayoutGroup;
+
+using Com.GitHub.Knose1.Common.Utils;
+using Com.GitHub.Knose1.Common.Attributes.PropertyAttributes;
 
 namespace Com.GitHub.Knose1.Common.UI
 {
@@ -603,7 +604,15 @@ namespace Com.GitHub.Knose1.Common.UI
 	}
 
 #if UNITY_EDITOR
-	// Align drawer
+	/// <summary>
+	/// Internal editor for drawing <see cref="BetterGrid.Align"/><br/>
+	/// Depending on if the grid is Vertical or Horizontal, it will show <see cref="BetterGrid.Align.AlignVertical"/> or <see cref="BetterGrid.Align.AlignHorizontal"/>
+	/// </summary>
+	/// <remarks>
+	///	This class is declared in the MonoBehaviour script for 2 reasons :
+	///	- Internal
+	///	- Limit the number of scripts to include in the UnityPackage
+	/// </remarks>
 	[UnityEditor.CustomPropertyDrawer(typeof(BetterGrid.Align))]
 	internal class AlignDrawer : UnityEditor.PropertyDrawer
 	{
