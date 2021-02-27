@@ -73,7 +73,7 @@ namespace Com.GitHub.Knose1.Common.AnimationUtils
 
 		private void Start()
 		{
-			if (!computeAnimatorsOnExecute) ComputeAnimatorsFromAnimatorData();
+			if (!computeAnimatorsOnExecute) ComputeAnimators();
 
 			if (executeOnStart) Execute();
 		}
