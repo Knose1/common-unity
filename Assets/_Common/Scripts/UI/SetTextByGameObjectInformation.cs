@@ -15,8 +15,8 @@ namespace Com.GitHub.Knose1.Common.UI
 			Index
 		}
 
-		[SerializeField] Information info;
-		[SerializeField, FormerlySerializedAs("gameObject")] GameObject go;
+		[SerializeField] Information info = Information.Index;
+		[SerializeField, FormerlySerializedAs("gameObject")] GameObject go = null;
 		Text text;
 
 		// Start is called before the first frame update

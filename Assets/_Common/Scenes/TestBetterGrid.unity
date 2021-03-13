@@ -133,6 +133,10 @@ GameObject:
   - component: {fileID: 5312438}
   - component: {fileID: 5312437}
   - component: {fileID: 5312436}
+  - component: {fileID: 5312439}
+  - component: {fileID: 5312440}
+  - component: {fileID: 5312441}
+  - component: {fileID: 5312442}
   - component: {fileID: 5312435}
   - component: {fileID: 5312434}
   - component: {fileID: 5312433}
@@ -688,6 +692,102 @@ MonoBehaviour:
     y: 0
     width: 0
     height: 0
+--- !u!114 &5312439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5312431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 816357036046dea49bd0881e5844d504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  executeOnStart: 1
+  computeAnimatorsOnExecute: 1
+  sequenceType: 0
+  animatorSequenceFunction: 6+(x)/(w)
+  animatorSequenceFunctionDebug: 0
+  animatorSequenceFunctionParameter:
+    paramName: Start
+    type: 3
+    floatValue: 0
+    intValue: 0
+    boolValue: 0
+  animatorSequenceList: []
+--- !u!114 &5312440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5312431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 816357036046dea49bd0881e5844d504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  executeOnStart: 1
+  computeAnimatorsOnExecute: 1
+  sequenceType: 0
+  animatorSequenceFunction: 10-(y)/(h)
+  animatorSequenceFunctionDebug: 0
+  animatorSequenceFunctionParameter:
+    paramName: Exit
+    type: 3
+    floatValue: 0
+    intValue: 0
+    boolValue: 0
+  animatorSequenceList: []
+--- !u!114 &5312441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5312431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 816357036046dea49bd0881e5844d504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  executeOnStart: 1
+  computeAnimatorsOnExecute: 1
+  sequenceType: 0
+  animatorSequenceFunction: 12+((w/2-x)*(w/2-x)+(h/2-y)*(h/2-y))/(w*h)
+  animatorSequenceFunctionDebug: 0
+  animatorSequenceFunctionParameter:
+    paramName: Start
+    type: 3
+    floatValue: 0
+    intValue: 0
+    boolValue: 0
+  animatorSequenceList: []
+--- !u!114 &5312442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5312431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 816357036046dea49bd0881e5844d504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  executeOnStart: 1
+  computeAnimatorsOnExecute: 1
+  sequenceType: 0
+  animatorSequenceFunction: 15-((w/2-x)*(w/2-x)+(h/2-y)*(h/2-y))/(w*h)
+  animatorSequenceFunctionDebug: 0
+  animatorSequenceFunctionParameter:
+    paramName: Exit
+    type: 3
+    floatValue: 0
+    intValue: 0
+    boolValue: 0
+  animatorSequenceList: []
 --- !u!1001 &6235735
 PrefabInstance:
   m_ObjectHideFlags: 0
