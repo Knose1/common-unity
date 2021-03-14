@@ -24,6 +24,8 @@ namespace Com.GitHub.Knose1.Common.Save
 			{
 				SettingsManager.LoadSettings();
 
+				Value = SettingsManager.settings.testSettingsValue;
+
 				saveButton.onClick.AddListener(SaveButton_OnClick);
 				loadButton.onClick.AddListener(LoadButton_OnClick);
 				inputField.onValueChanged.AddListener(Input_ValueChanged);
