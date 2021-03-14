@@ -129,7 +129,7 @@ namespace Com.GitHub.Knose1.Common.Utils
 			}
 			enumerator.Dispose();
 
-			return toReturn.Substring(toReturn.Length - joinString.Length, joinString.Length);
+			return toReturn.Substring(0, toReturn.Length - joinString.Length);
 		}
 
 		public static string ToJoinString<T>(this IEnumerable<T> t, Func<T, string> toStringFunc, string joinString = ",")
@@ -143,7 +143,7 @@ namespace Com.GitHub.Knose1.Common.Utils
 			}
 			enumerator.Dispose();
 
-			return toReturn.Substring(toReturn.Length - joinString.Length, joinString.Length);
+			return toReturn.Substring(0, toReturn.Length - joinString.Length);
 		}
 
 		public static string ToJoinString<T>(this IEnumerable<T> t, Func<T, int, string> toStringFunc, string joinString = ",")
@@ -159,9 +159,105 @@ namespace Com.GitHub.Knose1.Common.Utils
 			}
 			enumerator.Dispose();
 
-			return toReturn.Substring(toReturn.Length - joinString.Length, joinString.Length);
+			return toReturn.Substring(0, toReturn.Length - joinString.Length);
 		}
 
+
+		/*-----------------------------------*/
+		/*          Filter delegate          */
+		/*-----------------------------------*/
+
+		/// <summary>
+		/// Filter the elements of an enumerable
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="t"></param>
+		/// <param name="filter">Remove the element if true</param>
+		/// <returns></returns>
+		public static IEnumerable<T> Filter<T>(this IEnumerable<T> t, Func<T, bool> filter)
+		{
+			List<T> toReturn = new List<T>();
+			IEnumerator<T> enumerator = t.GetEnumerator();
+			while (enumerator.MoveNext())
+			{
+				if (!filter(enumerator.Current))
+					toReturn.Add(enumerator.Current);
+			}
+			enumerator.Dispose();
+
+			return toReturn;
+		}
+
+		/// <summary>
+		/// Filter the elements of an enumerable
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="t"></param>
+		/// <param name="filter">Remove the element if true</param>
+		/// <returns></returns>
+		public static IEnumerable<T> Filter<T>(this IEnumerable<T> t, Func<T, int, bool> filter)
+		{
+			List<T> toReturn = new List<T>();
+			IEnumerator<T> enumerator = t.GetEnumerator();
+
+			int index = -1;
+			while (enumerator.MoveNext())
+			{
+				if (!filter(enumerator.Current, ++index))
+					toReturn.Add(enumerator.Current);
+			}
+			enumerator.Dispose();
+
+			return toReturn;
+		}
+
+		/*-----------------------------------*/
+		/*           Keep delegate           */
+		/*-----------------------------------*/
+
+		/// <summary>
+		/// Keep certains elements of an enumerable
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="t"></param>
+		/// <param name="filter">Remove the element if false</param>
+		/// <returns></returns>
+		public static IEnumerable<T> Keep<T>(this IEnumerable<T> t, Func<T, bool> filter)
+		{
+			List<T> toReturn = new List<T>();
+			IEnumerator<T> enumerator = t.GetEnumerator();
+			while (enumerator.MoveNext())
+			{
+				if (filter(enumerator.Current))
+					toReturn.Add(enumerator.Current);
+			}
+			enumerator.Dispose();
+
+			return toReturn;
+		}
+
+		/// <summary>
+		/// Keep certains elements of an enumerable
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="t"></param>
+		/// <param name="filter">Remove the element if false</param>
+		/// <returns></returns>
+		public static IEnumerable<T> Keep<T>(this IEnumerable<T> t, Func<T, int, bool> filter)
+		{
+			List<T> toReturn = new List<T>();
+			IEnumerator<T> enumerator = t.GetEnumerator();
+
+			int index = -1;
+			while (enumerator.MoveNext())
+			{
+				if (filter(enumerator.Current, ++index))
+					toReturn.Add(enumerator.Current);
+			}
+			enumerator.Dispose();
+
+			return toReturn;
+		}
 
 	}
 }
