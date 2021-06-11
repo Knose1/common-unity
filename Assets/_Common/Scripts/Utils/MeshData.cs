@@ -63,7 +63,7 @@ namespace Com.GitHub.Knose1.Common.Utils
 		/// <param name="vertices">A list composed with 3 vertices</param>
 		/// <param name="startIndex">Will create a List<int>(){i,i+1,i+2}</param>
 		/// <returns>The reordered indexes</returns>
-		public List<int> getTriangleFromNormalAndVertices(Vector3 normal, List<Vector3> vertices, int startIndex = 0) => getTriangleFromNormalAndVertices(normal, vertices, new List<int>(NUMBER_OF_VERTICE_BY_TRIANGLE) { startIndex + 0, startIndex + 1, startIndex + 2 });
+		public static List<int> GetTriangleFromNormalAndVertices(Vector3 normal, List<Vector3> vertices, int startIndex = 0) => GetTriangleFromNormalAndVertices(normal, vertices, new List<int>(NUMBER_OF_VERTICE_BY_TRIANGLE) { startIndex + 0, startIndex + 1, startIndex + 2 });
 
 		/// <summary>
 		/// Reorder the list of indexes depending on the normal
@@ -72,7 +72,7 @@ namespace Com.GitHub.Knose1.Common.Utils
 		/// <param name="vertices">A list composed with 3 vertices</param>
 		/// <param name="indexes">A list composed with the indexes of the 3 vertices</param>
 		/// <returns>The reordered indexes</returns>
-		public List<int> getTriangleFromNormalAndVertices(Vector3 normal, List<Vector3> vertices, List<int> indexes)
+		public static List<int> GetTriangleFromNormalAndVertices(Vector3 normal, List<Vector3> vertices, List<int> indexes)
 		{
 			if (indexes.Count != NUMBER_OF_VERTICE_BY_TRIANGLE && vertices.Count != NUMBER_OF_VERTICE_BY_TRIANGLE) throw new System.Exception($"Can't calculate triangle : {nameof(indexes)}.Length != 3 AND {nameof(vertices)}.Count != 3");
 			if (indexes.Count != NUMBER_OF_VERTICE_BY_TRIANGLE) throw new System.Exception($"Can't calculate triangle : {nameof(indexes)}.Count != 3");
@@ -109,7 +109,7 @@ namespace Com.GitHub.Knose1.Common.Utils
 			List<Vector3> vert = ListUtils.ToList(a,b,c);
 			vertices.AddRange(vert);
 
-			List<int> indexes = getTriangleFromNormalAndVertices(normal, vert, startIndex);
+			List<int> indexes = GetTriangleFromNormalAndVertices(normal, vert, startIndex);
 			triangles.AddRange(indexes);
 
 			return indexes;
@@ -156,7 +156,7 @@ namespace Com.GitHub.Knose1.Common.Utils
 					t.Add(index);
 				}
 
-				triangles.AddRange(getTriangleFromNormalAndVertices(expectedNormal, v, t));
+				triangles.AddRange(GetTriangleFromNormalAndVertices(expectedNormal, v, t));
 			}
 
 			return indexes;
@@ -216,7 +216,7 @@ namespace Com.GitHub.Knose1.Common.Utils
 					}
 
 
-					List<int> triangle = getTriangleFromNormalAndVertices(normal,
+					List<int> triangle = GetTriangleFromNormalAndVertices(normal,
 					vertices: new List<Vector3>()
 					{
 						startPos,
@@ -505,14 +505,16 @@ namespace Com.GitHub.Knose1.Common.Utils
 		{
 			Rotate(Quaternion.AngleAxis(180, directorVector), symetryOrigine, indexes);
 		}
-
-		/* Normals */
+		/*----------------------------------------------*/
+		/*-                   Normal                   -*/
+		/*----------------------------------------------*/
 		public List<Vector3> GetTriangleNormals()
 		{
 			List<Vector3> normals = new List<Vector3>();
 			int count = triangles.Count;
 			for (int i = 0; i < count; i += 3)
 			{
+				if (count - i < 3) break;
 				Vector3 vect_o = vertices[triangles[i]];
 				Vector3 vect_i = vertices[triangles[i + 1]];
 				Vector3 vect_j = vertices[triangles[i + 2]];
@@ -554,6 +556,46 @@ namespace Com.GitHub.Knose1.Common.Utils
 			return toReturn;
 		}
 
+		public void SetNormals(Vector3 normal)
+		{
+			int count = triangles.Count;
+			for (int i = 0; i < count; i += 3)
+			{
+				if (count - i < 3) break;
+				SetNormal(normal, i, count);
+			}
+		}
+
+
+		public void SetNormal(Vector3 normal, int index) => SetNormal(normal, index, triangles.Count);
+		private void SetNormal(Vector3 normal, int index, int count)
+		{
+			//Set index to a 3 multiple
+			index = (index / 3) * 3;
+
+			if (count - index < 3) return;
+
+			int index_1 = index + 1;
+			int index_2 = index + 2;
+
+			int i_0 = triangles[index];
+			int i_1 = triangles[index_1];
+			int i_2 = triangles[index_2];
+
+			Vector3 p_0 = vertices[i_0];
+			Vector3 p_1 = vertices[i_1];
+			Vector3 p_2 = vertices[i_2];
+
+			List<int> triangle = GetTriangleFromNormalAndVertices(normal, ListUtils.ToList(p_0, p_1, p_2), ListUtils.ToList(i_0, i_1, i_2));
+
+			triangles[index] = triangle[0];
+			triangles[index_1] = triangle[1];
+			triangles[index_2] = triangle[2];
+		}
+
+		/*----------------------------------------------*/
+		/*-              Check for Double              -*/
+		/*----------------------------------------------*/
 		public void CheckForDouble(float threshold) => CheckForDouble(0, vertices.Count, threshold);
 		public void CheckForDouble(int verticeIndexMin, int verticeIndexMax, float threshold)
 		{

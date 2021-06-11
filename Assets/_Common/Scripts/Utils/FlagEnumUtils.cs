@@ -33,6 +33,21 @@ namespace Com.GitHub.Knose1.Common.Utils
 			refFlag = ToEnum<TFlag>(a);
 		}
 
+		public static void Remove<TFlag>(ref this TFlag refFlag, params TFlag[] flagsToRemove) where TFlag : struct, Enum
+		{
+			CheckAttributeTypeError<TFlag>();
+			
+			int a = Convert.ToInt32(refFlag);
+
+			for (int i = flagsToRemove.Length - 1; i >= 0; i--)
+			{
+				int b = Convert.ToInt32(flagsToRemove[i]);
+				a ^= b;
+			}
+
+			refFlag = ToEnum<TFlag>(a);
+		}
+
 		
 		public static IEnumerator<TFlag> GetEnumerator<TFlag>(this TFlag flags) where TFlag : Enum
 		{
@@ -42,7 +57,7 @@ namespace Com.GitHub.Knose1.Common.Utils
 
 			foreach (TFlag item in a)
 			{
-				if (flags.Contains(item))
+				if (flags.ContainsAll(item))
 				{
 					yield return item;
 				}
@@ -56,9 +71,9 @@ namespace Com.GitHub.Knose1.Common.Utils
 		/// </summary>
 		/// <typeparam name="TFlag"></typeparam>
 		/// <param name="flags"></param>
-		/// <param name="flagToTest"></param>
+		/// <param name="flagsToTest"></param>
 		/// <returns></returns>
-		public static bool Contains<TFlag>(this TFlag flags, TFlag flagsToTest) where TFlag : Enum
+		public static bool ContainsAll<TFlag>(this TFlag flags, TFlag flagsToTest) where TFlag : Enum
 		{
 			CheckAttributeTypeError<TFlag>();
 			Check0ValueError(flagsToTest);
@@ -70,12 +85,12 @@ namespace Com.GitHub.Knose1.Common.Utils
 		}
 
 		/// <summary>
-		/// Return true if a is only made of things in b
+		/// Return true if flags has flagsToTest things in it
 		/// </summary>
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
-		public static bool OnlyHas<TFlag>(this TFlag flags, TFlag flagsToTest) where TFlag : Enum
+		public static bool Contains<TFlag>(this TFlag flags, TFlag flagsToTest) where TFlag : Enum
 		{
 			CheckAttributeTypeError<TFlag>();
 			Check0ValueError(flagsToTest);
@@ -83,7 +98,7 @@ namespace Com.GitHub.Knose1.Common.Utils
 			int a = Convert.ToInt32(flags);
 			int b = Convert.ToInt32(flagsToTest);
 
-			return (a ^ b) == 0;
+			return (a & b) != 0;
 		}
 
 		/// <summary>

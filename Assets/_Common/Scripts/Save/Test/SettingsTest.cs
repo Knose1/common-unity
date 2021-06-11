@@ -42,7 +42,6 @@ namespace Com.GitHub.Knose1.Common.Save
 			private void SaveButton_OnClick()
 			{
 				SettingsManager.settings.testSettingsValue = _value;
-
 				SettingsManager.SaveSettings();
 			}
 
@@ -64,4 +63,7 @@ namespace Com.GitHub.Knose1.Common.Save
 #endif
 		internal int testSettingsValue;
 	}
+
 }
+
+
