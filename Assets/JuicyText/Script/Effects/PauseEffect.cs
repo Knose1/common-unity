@@ -11,11 +11,11 @@ namespace Com.GitHub.Knose1.JuicyText.Effects
 	{
 		private const string TAG_NAME = "pause";
 
-		public static IEnumerator LetterAdded(char c, int index, XMLTag tag, TextEffect text)
+		public static IEnumerator LetterAdded(char c, int quadIndex, XMLTag tag, TextEffect text)
 		{
 			text.doDefaultPause = false;
 
-			var attribute = tag.attributes.First( (a) => a == TAG_NAME );
+			var attribute = tag.GetAttribute(TAG_NAME);
 			float time = text.typingInterval * float.Parse(attribute.value);
 
 			yield return new WaitForSeconds(time);

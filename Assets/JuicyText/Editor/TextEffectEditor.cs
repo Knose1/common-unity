@@ -9,11 +9,13 @@ namespace Com.GitHub.Knose1.JuicyText.Editor
 	public class TextEffectEditor : UnityEditor.UI.TextEditor
 	{
 		private SerializedProperty propTypingInterval;
+		private SerializedProperty propStartTextOnStart;
 
 		protected override void OnEnable()
 		{
 			base.OnEnable();
 			propTypingInterval = serializedObject.FindProperty("typingInterval");
+			propStartTextOnStart = serializedObject.FindProperty("startTextOnStart");
 		}
 
 		public override void OnInspectorGUI()
@@ -21,6 +23,7 @@ namespace Com.GitHub.Knose1.JuicyText.Editor
 			base.OnInspectorGUI();
 			serializedObject.Update();
 			EditorGUILayout.PropertyField(propTypingInterval);
+			EditorGUILayout.PropertyField(propStartTextOnStart);
 			serializedObject.ApplyModifiedProperties();
 		}
 	}

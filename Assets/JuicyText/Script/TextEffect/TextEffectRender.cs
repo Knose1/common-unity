@@ -1,7 +1,9 @@
-﻿// A part of the script is from :
-// https://github.com/Unity-Technologies/uGUI/blob/2019.1/UnityEngine.UI/UI/Core/Text.cs
+﻿//-///////////////////////////////////////////////////////////-//
+//                                                             //
+// This script handle the quad generation                      //
+//                                                             //
+//-///////////////////////////////////////////////////////////-//
 
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,29 +15,39 @@ namespace Com.GitHub.Knose1.JuicyText
 	/// </summary>
 	public partial class TextEffect : Text
 	{
-		protected TextEffect() : base() {}
-
+		/// <summary>
+		/// A the data of quads without the custom effects
+		/// </summary>
 		protected List<MeshQuad> unModifiedQuads = new List<MeshQuad>();
+
+		/// <summary>
+		/// A the data of quads with the custom effects
+		/// </summary>
 		protected List<MeshQuad> quads = new List<MeshQuad>();
+
 		protected override void OnPopulateMesh(VertexHelper toFill)
 		{
 			int previousQuadsCount = unModifiedQuads.Count;
 
+			//Clear previous quads
 			toFill.Clear();
-			
+
 			GenerateQuads();
 			quads = new List<MeshQuad>(unModifiedQuads);
-		
+
+			//Get if there is more quads (difference)
 			int unModifiedQuadsCount = unModifiedQuads.Count;
 			int difference = Mathf.Max(0, unModifiedQuadsCount - previousQuadsCount); //Can't be negative
+
+			//This part add a time slot for each new generated quads
 			for (int i = 0; i < difference; i++)
 			{
 				currentQuadTime.Add(0);
 			}
-			UpdateQuadsEffect();
+			UpdateQuadsEffect(false); //Call the update
 
+			//For each quads, add quad to the screen
 			int quadsCount = quads.Count;
-
 			for (int i = 0; i < quadsCount; i++)
 			{
 				toFill.AddUIVertexQuad(quads[i]);
@@ -45,6 +57,9 @@ namespace Com.GitHub.Knose1.JuicyText
 		MeshQuad m_TempVerts = new MeshQuad();
 		private void GenerateQuads()
 		{
+			// A part of the function is from :
+			// https://github.com/Unity-Technologies/uGUI/blob/2019.1/UnityEngine.UI/UI/Core/Text.cs#L645
+
 			if (font == null)
 				return;
 
@@ -84,7 +99,7 @@ namespace Com.GitHub.Knose1.JuicyText
 					uIVertex.position.x += roundingOffset.x;
 					uIVertex.position.y += roundingOffset.y;
 					m_TempVerts[tempVertsIndex] = uIVertex;
-					
+
 					if (tempVertsIndex == 3)
 						unModifiedQuads.Add(m_TempVerts.Copy());
 				}
@@ -94,11 +109,11 @@ namespace Com.GitHub.Knose1.JuicyText
 				for (int i = 0; i < vertCount; ++i)
 				{
 					int tempVertsIndex = i & 3;
-					
+
 					UIVertex uIVertex = verts[i];
 					uIVertex.position *= unitsPerPixel;
 					m_TempVerts[tempVertsIndex] = uIVertex;
-					
+
 					if (tempVertsIndex == 3)
 						unModifiedQuads.Add(m_TempVerts.Copy());
 				}

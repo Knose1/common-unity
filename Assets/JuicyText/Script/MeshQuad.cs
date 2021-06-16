@@ -66,6 +66,15 @@ namespace Com.GitHub.Knose1.JuicyText
 			}
 		}
 
+		public Vector3 Position
+		{
+			get => Center();
+			set
+			{
+				Translate(value-Position);
+			}
+		}
+
 		/*----------------------------------------------*/
 		/*-          Translate, Rotate, Scale          -*/
 		/*----------------------------------------------*/

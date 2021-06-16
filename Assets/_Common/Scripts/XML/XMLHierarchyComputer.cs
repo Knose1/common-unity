@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -13,7 +12,14 @@ namespace Com.GitHub.Knose1.Common.XML
 	{
 		public readonly string[] UNITY_BUILT_IN = new string[] { "b", "i", "size", "color", "material"};
 
+		/// <summary>
+		/// The text to compute
+		/// </summary>
 		public string text;
+		/// <summary>
+		/// The text without the XML tags
+		/// </summary>
+		public string UnTagedText => XMLReader.tagFind.Replace(text, "");
 
 		private List<XMLTag> _xmlHierarchy = new List<XMLTag>();
 		public List<XMLTag> XMLHierarchy => _xmlHierarchy;
@@ -33,9 +39,6 @@ namespace Com.GitHub.Knose1.Common.XML
 		{
 			_xmlHierarchy.Clear();
 			_tagList.Clear();
-
-			//Replace every return into space char so that everything is on one line
-			//string replaced = text.Replace("\n", " ").Replace("\r", " ");
 
 			//Get the XML
 			XMLReader xl = new XMLReader(text);
@@ -57,7 +60,7 @@ namespace Com.GitHub.Knose1.Common.XML
 			if (isStartElement)
 			{
 				XMLTag balise = new XMLTag(name, new RangeInt(xl.Index, 0), default, UNITY_BUILT_IN.Contains(name));
-				balise.startTagString = xl.Balise;
+				balise.startTagString = xl.Raw;
 
 				if (unCompletedXML.Count > 0) unCompletedXML.Last().childs.Add(balise);
 				unCompletedXML.Add(balise);
@@ -84,7 +87,7 @@ namespace Com.GitHub.Knose1.Common.XML
 				}
 
 				var balise = unCompletedXML[index];
-				balise.endTagString = xl.Balise;
+				balise.endTagString = xl.Raw;
 				balise.tagEnd.start = xl.Index;
 				xl.Next();
 				balise.tagEnd.length = xl.Index - balise.tagEnd.start;

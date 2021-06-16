@@ -1,14 +1,24 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Com.GitHub.Knose1.Common.XML
 {
+	/// <summary>
+	/// Represents an attribute in XML.
+	/// </summary>
 	public struct XMLAttribute : IEquatable<XMLAttribute>
 	{
+		/// <summary>
+		/// The name of the attribute
+		/// </summary>
 		public string name;
+		/// <summary>
+		/// The value of the attribute
+		/// </summary>
 		public string value;
-
+		
 		public XMLAttribute(string name, string value)
 		{
 			this.name = name ?? throw new ArgumentNullException(nameof(name));
@@ -50,16 +60,44 @@ namespace Com.GitHub.Knose1.Common.XML
 		public override int GetHashCode() => 363513814 + EqualityComparer<string>.Default.GetHashCode(name);
 	}
 
+	/// <summary>
+	/// Represent a tag in the XML code
+	/// </summary>
 	public class XMLTag : IEquatable<XMLTag>
 	{
+		/// <summary>
+		/// The name of the tag
+		/// </summary>
 		public string name = default;
+		/// <summary>
+		/// The range where the start tag is
+		/// </summary>
 		public RangeInt tagStart = default;
+		/// <summary>
+		/// The range where the end tag is
+		/// </summary>
 		public RangeInt tagEnd = default;
+		/// <summary>
+		/// If the tag is from unity or not
+		/// </summary>
 		public bool isUnityDefault = default;
+		/// <summary>
+		/// The tags inside this tag
+		/// </summary>
 		public List<XMLTag> childs = null;
+		/// <summary>
+		/// The attributes of this tag
+		/// </summary>
 		public List<XMLAttribute> attributes = null;
-		
+
+		/// <summary>
+		/// The string of the start tag
+		/// </summary>
 		public string startTagString;
+
+		/// <summary>
+		/// The string of the end tag
+		/// </summary>
 		public string endTagString;
 
 		public XMLTag(string name) { this.name = name; }
@@ -81,6 +119,20 @@ namespace Com.GitHub.Knose1.Common.XML
 			this.childs = new List<XMLTag>();
 			this.attributes = new List<XMLAttribute>();
 		}
+
+		/// <summary>
+		/// Get an attribute by its name.
+		/// </summary>
+		/// <param name="attributeName"></param>
+		/// <returns></returns>
+		public XMLAttribute GetAttribute(string attributeName) => attributes.First((a) => a == attributeName);
+
+		/// <summary>
+		/// Get an attribute by its name.
+		/// </summary>
+		/// <param name="attributeName"></param>
+		/// <returns></returns>
+		public XMLAttribute? GetAttributeIfExist(string attributeName) => attributes.Cast<XMLAttribute?>().FirstOrDefault((a) => a.Value == attributeName);
 
 		/// <summary>
 		/// Get if the index is between the start and end tag

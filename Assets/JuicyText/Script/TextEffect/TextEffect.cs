@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-///////////////////////////////////////////////////////////-//
+//                                                             //
+// This script handle the juicyness and the unity messages     //
+//                                                             //
+//-///////////////////////////////////////////////////////////-//
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,21 +12,57 @@ using UnityEngine.UI;
 
 namespace Com.GitHub.Knose1.JuicyText
 {
+	/// <summary>
+	/// Draw font on the screen with effects
+	/// </summary>
+	[AddComponentMenu("UI/Effects/" + nameof(TextEffect))]
 	public partial class TextEffect : Text
 	{
+		/// <summary>
+		/// The interval before a new char/quad apear
+		/// </summary>
 		[SerializeField] public float typingInterval = 0.1f;
+
+		/// <summary>
+		/// If true, <see cref="StartText"/> will be called on <see cref="Start"/>
+		/// </summary>
+		[SerializeField] public bool startTextOnStart = true;
+
+		/// <summary>
+		/// If true, <see cref="OnLetterGenerate"/> with yield return new <see cref="WaitForSeconds"/>(<see cref="typingInterval"/>);
+		/// </summary>
 		[NonSerialized] public bool doDefaultPause;
+
+		/// <summary>
+		/// The elapsed time since the quad was spawned
+		/// </summary>
 		[NonSerialized] public List<float> currentQuadTime = new List<float>();
 
-
+		/// <summary>
+		/// True if the text is writing
+		/// </summary>
 		public bool IsPlaying => textCoroutine != null;
-		protected string textToShow;
-		Coroutine textCoroutine;
+
+		/// <summary>
+		/// Text rendered at then end. <see cref="TextCoroutine"/>
+		/// </summary>
+		private string textToShow;
+
+		/// <summary>
+		/// See : <see cref="TextCoroutine"/>
+		/// </summary>
+		private Coroutine textCoroutine;
+
+		protected TextEffect() : base() { }
+
+		public override string text { get => base.text; set => base.text = value.Replace("\r", ""); }
 
 #if UNITY_EDITOR
 		protected override void OnValidate()
 		{
 			base.OnValidate();
+
+			text = text.Replace("\r", "");
 
 			if (Application.isPlaying)
 			{
@@ -32,7 +74,6 @@ namespace Com.GitHub.Knose1.JuicyText
 			}
 		}
 #endif
-
 		protected override void Start()
 		{
 			base.Start();
@@ -45,9 +86,18 @@ namespace Com.GitHub.Knose1.JuicyText
 				return;
 			}
 #endif
-			StartText();
+			if (startTextOnStart) StartText();
 		}
 
+		protected virtual void Update()
+		{
+			UpdateQuadsEffect();
+			SetVerticesDirty();
+		}
+
+		/// <summary>
+		/// Start the text effect.
+		/// </summary>
 		public void StartText()
 		{
 			currentQuadTime.Clear();
@@ -56,24 +106,45 @@ namespace Com.GitHub.Knose1.JuicyText
 			textCoroutine = StartCoroutine(TextCoroutine());
 		}
 
-		private void StopText()
+		/// <summary>
+		/// Stop the the text effect.
+		/// </summary>
+		public void StopText()
 		{
 			StopCoroutine(textCoroutine);
 			textCoroutine = null;
 		}
 
-		private enum CharPosition
+
+		/// <summary>
+		/// Return true if the quad exist<br/>
+		/// See also <seealso cref="WaitForQuadExist"/>
+		/// </summary>
+		/// <param name="index">Quad index</param>
+		/// <returns></returns>
+		public bool DoQuadExist(int index)
 		{
-			Outside, Inside, Balise
+			return quads.Count > index;
 		}
 
-		private void Update()
+		/// <summary>
+		/// Wait for quad to exist<br/>
+		/// See also <seealso cref="DoQuadExist"/>
+		/// </summary>
+		/// <param name="index">Quad index</param>
+		/// <returns></returns>
+		public IEnumerator WaitForQuadExist(int index)
 		{
-			UpdateQuadsEffect();
-			SetVerticesDirty();
+			Func<bool> predicate = () => DoQuadExist(index);
+			return new WaitUntil(predicate);
 		}
 
-		protected virtual void UpdateQuadsEffect()
+		/// <summary>
+		/// This function is called in the <see cref="Update"/> and in the <see cref="OnPopulateMesh"/>.<br/>
+		/// It iterates on every quad and execute their <see cref="DoQuadUpdate"/>.<br/>
+		/// Override only if you know what you're doing.
+		/// </summary>
+		protected virtual void UpdateQuadsEffect(bool updateTime = true)
 		{
 
 #if UNITY_EDITOR
@@ -84,8 +155,7 @@ namespace Com.GitHub.Knose1.JuicyText
 
 			for (int i = quadsCount - 1; i >= 0; i--)
 			{
-				this.currentQuadTime[i] += Time.deltaTime;
-				float currentTime = this.currentQuadTime[i];
+				if (updateTime) this.currentQuadTime[i] += Time.deltaTime;
 
 				quads[i] = DoQuadUpdate(i, quads[i]);
 			}
@@ -93,14 +163,36 @@ namespace Com.GitHub.Knose1.JuicyText
 
 		}
 
-		protected MeshQuad DoXMLQuadUpdate(int index, MeshQuad quad)
+		/// <summary>
+		/// This function is called in the <see cref="UpdateQuadsEffect"/>.<br/>
+		/// Override this function to give a custom global effect.<br/>
+		/// Don't forget to call <see cref="DoXMLTagQuadUpdate"/>
+		/// </summary>
+		/// <param name="index">Quad index</param>
+		/// <param name="quad">Quad data</param>
+		/// <returns></returns>
+		protected virtual MeshQuad DoQuadUpdate(int index, MeshQuad quad)
 		{
-			/*if (!xmlBaliseHierarchyByIndex.ContainsKey(index))
-			{
-				return quad;
-			}*/
+			//Custom effect example:
+			/*
+			Color col = quad.color;
+			col.a = 1-(currentQuadTime[index ]/ 3);
 
-			var hierarchy = xmlBaliseHierarchyByIndex[index];
+			quad.color = col;
+			*/
+
+			return DoXMLTagQuadUpdate(index, quad);
+		}
+
+		/// <summary>
+		/// Search for xml tag and execute their update.
+		/// </summary>
+		/// <param name="index">Quad index</param>
+		/// <param name="quad">Quad data</param>
+		/// <returns></returns>
+		protected MeshQuad DoXMLTagQuadUpdate(int index, MeshQuad quad)
+		{
+			var hierarchy = xmlTagHierarchyByIndex[index];
 
 			foreach (var item in hierarchy)
 			{
@@ -128,34 +220,27 @@ namespace Com.GitHub.Knose1.JuicyText
 
 			return quad;
 		}
-		protected virtual MeshQuad DoQuadUpdate(int index, MeshQuad quad)
+
+		/// <summary>
+		/// This event is called before any character get generated.
+		/// </summary>
+		/// <returns></returns>
+		protected virtual IEnumerator OnBeforeStartLetterGeneration()
 		{
-			/*Color.RGBToHSV(meshQuad.color, out float h, out float s, out float v);
-			Color charColor = Color.HSVToRGB(currentTime + h, 1, 1);
-			charColor.a = 1-(currentTime/3);
-
-			if (charColor.a < 0)
-			{
-				quads.RemoveAt(i);
-				continue;
-			}
-
-			meshQuad.color = charColor;*/
-			//meshQuad.Rotate(Quaternion.AngleAxis(currentTime * 10, Vector3.back), meshQuad.Center());
-
-			return DoXMLQuadUpdate(index, quad);
+			yield return new WaitForSeconds(typingInterval);
 		}
 
-		protected virtual IEnumerator OnBeforeLetterGenerate(int index)
-		{
-			return null;
-		}
-
-		protected virtual IEnumerator OnLetterGenerate(char c, int index)
+		/// <summary>
+		/// This event is called when a new characer has been generated.
+		/// </summary>
+		/// <param name="c">New characted</param>
+		/// <param name="quadIndex">Quad index</param>
+		/// <returns></returns>
+		protected virtual IEnumerator OnLetterGenerate(char c, int quadIndex)
 		{
 			doDefaultPause = true;
 
-			foreach (var item in xmlBaliseHierarchy)
+			foreach (var item in xmlTagHierarchy)
 			{
 				Type t = GetTagLetterAddingHandler(item);
 				if (t is null)
@@ -170,22 +255,22 @@ namespace Com.GitHub.Knose1.JuicyText
 
 				if (IsIEnumerator(method))
 				{
-					yield return (IEnumerator)method.Invoke(t, new object[] { c, index, item, this });
+					var subRoutine = (IEnumerator)method.Invoke(t, new object[] { c, quadIndex, item, this });
+					if (subRoutine != null)
+						yield return subRoutine;
 				}
-
 				else if (IsVoid(method))
 				{
-					method.Invoke(t, new object[] { c, index, item, this });
+					method.Invoke(t, new object[] { c, quadIndex, item, this });
 				}
-
 				else
 				{
-					Debug.LogWarning("Return type of the method " + t.Name + "." + LETTER_ADDED_METHOD + " must be or \"void\" or \"IEnumerator\"");
+					Debug.LogWarning("Return type of the method " + t.Name + "." + LETTER_ADDED_METHOD + " must be or \"void\" or \"" + nameof(IEnumerator) + "\"");
 				}
 			}
 
 			if (doDefaultPause)
-			yield return new WaitForSeconds(typingInterval);
+				yield return new WaitForSeconds(typingInterval);
 		}
 	}
 
