@@ -120,6 +120,9 @@ namespace Com.GitHub.Knose1.Common.Utils
 		/*-----------------------------------*/
 		public static string ToJoinString<T>(this IEnumerable<T> t, string joinString = ",")
 		{
+			if (t.Count() == 0)
+				return "";
+
 			string toReturn = "";
 			IEnumerator<T> enumerator = t.GetEnumerator();
 
@@ -134,6 +137,9 @@ namespace Com.GitHub.Knose1.Common.Utils
 
 		public static string ToJoinString<T>(this IEnumerable<T> t, Func<T, string> toStringFunc, string joinString = ",")
 		{
+			if (t.Count() == 0)
+				return "";
+
 			string toReturn = "";
 			IEnumerator<T> enumerator = t.GetEnumerator();
 
@@ -148,6 +154,9 @@ namespace Com.GitHub.Knose1.Common.Utils
 
 		public static string ToJoinString<T>(this IEnumerable<T> t, Func<T, int, string> toStringFunc, string joinString = ",")
 		{
+			if (t.Count() == 0)
+				return "";
+
 			string toReturn = "";
 			IEnumerator<T> enumerator = t.GetEnumerator();
 
