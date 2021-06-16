@@ -44,14 +44,20 @@ namespace Com.GitHub.Knose1.JuicyText
 		public bool IsPlaying => textCoroutine != null;
 
 		/// <summary>
-		/// Text rendered at then end. <see cref="TextCoroutine"/>
+		/// Text rendered at the end. <see cref="TextCoroutine"/>
+		/// Proced with care when modifying it.
 		/// </summary>
-		private string textToShow;
+		public string textToShow;
 
 		/// <summary>
 		/// See : <see cref="TextCoroutine"/>
 		/// </summary>
 		private Coroutine textCoroutine;
+
+		/// <summary>
+		/// See : <see cref="UpdateQuadsEffect"/>
+		/// </summary>
+		public bool UpdateTime { get; private set; }
 
 		protected TextEffect() : base() { }
 
@@ -115,6 +121,23 @@ namespace Com.GitHub.Knose1.JuicyText
 			textCoroutine = null;
 		}
 
+		/// <summary>
+		/// Convert a point from screen space to mesh space.
+		/// </summary>
+		/// <param name="screenPoint"></param>
+		/// <returns></returns>
+		public Vector2 ScreenSpaceToMeshSpace(Vector2 screenPoint)
+		{
+			Bounds bounds = RectTransformUtility.CalculateRelativeRectTransformBounds(rectTransform.GetComponentInParent<Canvas>().transform, transform);
+
+			Vector2 absoluteCenter = new Vector2(
+				Mathf.LerpUnclamped(bounds.min.x, bounds.max.x, rectTransform.pivot.x),
+				Mathf.LerpUnclamped(bounds.min.y, bounds.max.y, rectTransform.pivot.y)
+			);
+
+			return screenPoint - absoluteCenter - new Vector2(Screen.currentResolution.width, Screen.currentResolution.height)/2;
+		}
+
 
 		/// <summary>
 		/// Return true if the quad exist<br/>
@@ -146,7 +169,7 @@ namespace Com.GitHub.Knose1.JuicyText
 		/// </summary>
 		protected virtual void UpdateQuadsEffect(bool updateTime = true)
 		{
-
+			UpdateTime = updateTime;
 #if UNITY_EDITOR
 			if (!Application.isPlaying) return;
 #endif

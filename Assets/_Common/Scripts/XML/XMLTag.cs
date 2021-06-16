@@ -63,7 +63,7 @@ namespace Com.GitHub.Knose1.Common.XML
 	/// <summary>
 	/// Represent a tag in the XML code
 	/// </summary>
-	public class XMLTag : IEquatable<XMLTag>
+	public class XMLTag
 	{
 		/// <summary>
 		/// The name of the tag
@@ -265,21 +265,6 @@ namespace Com.GitHub.Knose1.Common.XML
 				
 				return toReturn;
 			}
-		}
-
-		public override bool Equals(object obj) => obj is XMLTag hierarchy && Equals(hierarchy);
-		public bool Equals(XMLTag other) => !(other is null) && name == other.name;
-		public override int GetHashCode() => 363513814 + EqualityComparer<string>.Default.GetHashCode(name);
-
-		public static bool operator ==(XMLTag left, XMLTag right)
-		{
-			if (left is null) return right is null;
-			return left.Equals(right);
-		}
-
-		public static bool operator !=(XMLTag left, XMLTag right)
-		{
-			return !(left == right);
 		}
 
 		public static implicit operator XMLTag(string name) => new XMLTag(name);

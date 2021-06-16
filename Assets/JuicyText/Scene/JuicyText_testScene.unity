@@ -178,7 +178,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: e3265ab4bf004d28a9537516768c1c75, type: 3}
     m_FontSize: 22
     m_FontStyle: 0
     m_BestFit: 1
@@ -190,19 +190,38 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Hello there ! Do you like <rainbow moveSpeed="5" colorSpeed="0,5" xDistance="5"
-    yDistance="10">rainbow effects <pause="10">?</pause></rainbow>
+  m_Text: 'Hello there <pause="5">!</pause> Do you like <rainbow moveSpeed="5" colorSpeed="0,5"
+    xDistance="5" yDistance="10">rainbow effects <pause="10">?</pause></rainbow>
 
 
-    I''m also
-    able to type in <pause="2">SLOW MOTION !</pause>
+    I''m
+    also able to type in <pause="2">SLOW MOTION <pause="5">!</pause></pause>
 
 
-    <i>See</i> <pause="5">!</pause>
-    there are lots of <color="white"><b>things</b></color> <color="purple"><interact_avoid>I
-    can do !</interact_avoid></color>'
+    <i>See</i>
+    <pause="5">!</pause> There are lots of <color="white"><b>things</b></color> <color="purple"><interact_avoid>I
+    can do <pause="5">!</pause></interact_avoid></color>
+
+
+    I can also do <interact_avoid><shake
+    force="3">spooky</shake></interact_avoid> <color="white"><glitch>things</glitch></color>'
   typingInterval: 0.1
   startTextOnStart: 1
+  textToShow: 'Hello there <pause="5">!</pause> Do you like <rainbow moveSpeed="5"
+    colorSpeed="0,5" xDistance="5" yDistance="10">rainbow effects <pause="10">?</pause></rainbow>
+
+
+    I''m
+    also able to type in <pause="2">SLOW MOTION <pause="5">!</pause></pause>
+
+
+    <i>See</i>
+    <pause="5">!</pause> There are lots of <color="white"><b>things</b></color> <color="purple"><interact_avoid>I
+    can do <pause="5">!</pause></interact_avoid></color>
+
+
+    I can also do <interact_avoid><shake
+    force="3">spooky</shake></interact_avoid> <color="white"><glitch>things</glitch></color>'
 --- !u!222 &123606017
 CanvasRenderer:
   m_ObjectHideFlags: 0

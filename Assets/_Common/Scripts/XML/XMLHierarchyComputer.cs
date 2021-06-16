@@ -78,8 +78,7 @@ namespace Com.GitHub.Knose1.Common.XML
 			}
 			else
 			{
-
-				int index = unCompletedXML.LastIndexOf(name);
+				int index = unCompletedXML.FindLastIndex( (x) => x == name) ;
 				if (index == -1)
 				{
 					xl.Next();

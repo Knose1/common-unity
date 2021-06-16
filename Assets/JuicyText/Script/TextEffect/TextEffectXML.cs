@@ -16,12 +16,14 @@ namespace Com.GitHub.Knose1.JuicyText
 	{
 		public readonly int quadIndex;
 		public readonly int untaggedIndex;
+		public readonly int textToShowIndex;
 		public readonly int stringIndex;
 
-		public TextEffectIndexConversion(int quadIndex, int untaggedIndex, int stringIndex)
+		public TextEffectIndexConversion(int quadIndex, int untaggedIndex, int textToShowIndex, int stringIndex)
 		{
 			this.quadIndex = quadIndex;
 			this.untaggedIndex = untaggedIndex;
+			this.textToShowIndex = textToShowIndex;
 			this.stringIndex = stringIndex;
 		}
 	}
@@ -95,6 +97,7 @@ namespace Com.GitHub.Knose1.JuicyText
 
 			_untaggedText = xmlComputer.UnTagedText;
 			int nonTagIndex = 0;
+			int textToShowIndex = 0;
 
 			//Index where to remove the temporary end tags
 			int tempTagStartIndex = -1;
@@ -127,7 +130,7 @@ namespace Com.GitHub.Knose1.JuicyText
 				}
 
 				//Get the current non space char
-				char myChar = GetCurrentChar(textLength, ref i, ref nonTagIndex);
+				char myChar = GetCurrentChar(textLength, ref i, ref nonTagIndex, ref textToShowIndex);
 
 				//Check if next nonspace char is a tag
 				XMLTag currentTag = XMLTag.GetTag(i, xmlComputer.TagList, out bool isEndTag);
@@ -144,6 +147,7 @@ namespace Com.GitHub.Knose1.JuicyText
 						newTag = true;
 
 						//Remove the letter from the text to show
+						--textToShowIndex;
 						--nonTagIndex;
 						--i;
 						textToShow = textToShow.Remove(textToShow.Length - 1);
@@ -158,6 +162,7 @@ namespace Com.GitHub.Knose1.JuicyText
 							i = currentTag.tagEnd.end;
 							if (currentTag.isUnityDefault)
 							{
+								textToShowIndex += currentTag.tagEnd.length+1;
 								textToShow += currentTag.endTagString;
 							}
 						}
@@ -166,6 +171,7 @@ namespace Com.GitHub.Knose1.JuicyText
 							i = currentTag.tagStart.end;
 							if (currentTag.isUnityDefault)
 							{
+								textToShowIndex += currentTag.tagStart.length+1;
 								textToShow += currentTag.startTagString;
 							}
 						}
@@ -180,6 +186,7 @@ namespace Com.GitHub.Knose1.JuicyText
 						//Let's get onto the next char
 						i++;
 						nonTagIndex++;
+						textToShowIndex++;
 
 
 						//Avoid text limit breaking
@@ -189,7 +196,7 @@ namespace Com.GitHub.Knose1.JuicyText
 							break;
 						}
 
-						myChar = GetCurrentChar(textLength, ref i, ref nonTagIndex);
+						myChar = GetCurrentChar(textLength, ref i, ref nonTagIndex, ref textToShowIndex);
 
 						currentTag = XMLTag.GetTag(i, xmlComputer.TagList, out isEndTag);
 
@@ -222,7 +229,7 @@ namespace Com.GitHub.Knose1.JuicyText
 				xmlTagHierarchyByIndex.Add(new List<XMLTag>(this.xmlTagHierarchy));
 
 				//Add a conversion
-				indexConversionTable.Add(new TextEffectIndexConversion(quadsCount, nonTagIndex, i));
+				indexConversionTable.Add(new TextEffectIndexConversion(quadsCount, nonTagIndex, textToShowIndex, i));
 
 				//Dispatch OnLetterGenerate
 				{
@@ -233,6 +240,7 @@ namespace Com.GitHub.Knose1.JuicyText
 				SetVerticesDirty();
 
 				//Prepare index for next for loop
+				textToShowIndex += 1;
 				nonTagIndex += 1;
 				quadsCount += 1;
 			}
@@ -242,21 +250,24 @@ namespace Com.GitHub.Knose1.JuicyText
 
 		/// <summary>
 		/// Find the next non whitespace character.<br/>
-		/// While itarating, it increase the index and the nonTagIndex.
+		/// While itarating, it increase the index, the nonTagIndex and the textToShowIndex.
 		/// </summary>
 		/// <param name="textLength"></param>
 		/// <param name="index"></param>
 		/// <param name="nonTagIndex"></param>
+		/// <param name="textToShowIndex"></param>
 		/// <returns>Current char</returns>
-		private char GetCurrentChar(int textLength, ref int index, ref int nonTagIndex)
+		private char GetCurrentChar(int textLength, ref int index, ref int nonTagIndex, ref int textToShowIndex)
 		{
 			char myChar = default;
 			index--;
 			nonTagIndex--;
+			textToShowIndex--;
 			do
 			{
 				index++;
 				nonTagIndex++;
+				textToShowIndex++;
 				if (index == textLength)
 				{
 					break;
