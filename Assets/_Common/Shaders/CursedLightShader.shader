@@ -1,10 +1,10 @@
-﻿Shader "Custom/ToonShader"
+﻿Shader "Custom/CursedLightShader"
 {
 	Properties
 	{
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
-		_ShadingQuality ("Shading Quality", float) = 10
+		_ShadingQuality("Shading Quality", float) = 10
 	}
 	SubShader
 	{
@@ -20,9 +20,9 @@
 		half4 LightingToon(SurfaceOutput s, half3 lightDir, half atten) {
 
 			half NdotL = dot(s.Normal, lightDir);
+			half light = -NdotL;
+			light = max(0,light);
 
-			half light = (NdotL * atten);
-			light = max(0, light);
 			light = floor(light * _ShadingQuality) / _ShadingQuality;
 
 			half4 c;
