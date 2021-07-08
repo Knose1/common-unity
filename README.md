@@ -9,7 +9,7 @@ Feel free to share your work in [Discussions tab](https://github.com/Knose1/comm
 If you have any question or problem with a tool / util. Don't hesitate create a post in discussion tab.  
   
 Also this is not a collaborative projet, it's just a dump of tools / utils I coded.  
-This means that any pull request will dismissed.  
+That means that any pull request will dismissed.  
 Of course tips and helps are welcomed in the issues and discussion tab.  
   
 ### Included packages I didn't coded :
