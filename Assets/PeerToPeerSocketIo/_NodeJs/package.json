@@ -10,7 +10,7 @@
 		"install-dependencies": "npm i"
 	},
 	"dependencies": {
-		"express": "^4.17.1",
+		"express": "^4.18.2",
 		"shortid": "^2.2.15",
 		"socket.io": "^2.3.0"
 	},
